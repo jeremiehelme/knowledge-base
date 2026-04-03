@@ -66,7 +66,7 @@ Pour reconstruire INDEX.md from scratch :
 4. Reconstruit l'INDEX.md complet avec toutes les entrées, résumés et tags
 5. Ajoute aussi les pages wiki de `wiki/` dans une section dédiée
 
-Tu peux aussi utiliser `python scripts/rebuild_index.py` comme base et enrichir le résultat avec tes résumés.
+Utilise Glob pour trouver tous les fichiers `.md` dans `sources/`, Read pour lire leur front matter et contenu, puis construis INDEX.md directement.
 
 ### Vérification de cohérence
 

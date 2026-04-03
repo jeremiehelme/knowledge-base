@@ -11,7 +11,6 @@ sources/
 ├── web/              ← Pages web converties en markdown
 └── notes/            ← Notes manuelles, CR de réunions
 wiki/                 ← Synthèses thématiques générées
-scripts/              ← Scripts d'ingestion (add_url.py, add_pdf.py, rebuild_index.py)
 .prompts/             ← Prompt système de référence
 ```
 
@@ -69,7 +68,7 @@ Quand l'utilisateur dit des choses comme :
 - **Ne jamais inventer** d'information qui n'est pas dans les documents
 - **Cohérence des tags** : avant de tagger, lis INDEX.md pour voir les tags existants et les réutiliser
 - **Markdown front matter** : chaque fichier source a un front matter YAML (title, date, type, tags)
-- **Venv Python** : les scripts Python nécessitent le venv (`.venv/`). Les scripts détectent et utilisent le venv automatiquement.
+- **Pas de dépendance externe** : toutes les opérations (ingestion, recherche, synthèse, maintenance) utilisent les outils natifs de Claude (WebFetch, Read, Write, Edit, Glob, Grep)
 
 ## Exemples de commandes naturelles
 

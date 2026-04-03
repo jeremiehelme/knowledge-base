@@ -60,14 +60,22 @@ publication_date: YYYY-MM-DD (si connue)
 
 ### 3. Extraction de contenu
 
-**Pour les URLs** : utilise le script `scripts/add_url.py` s'il est disponible dans le venv, sinon utilise les outils web (WebFetch) pour récupérer le contenu et le convertir toi-même en markdown propre. Supprime la navigation, les pubs, les footers — ne garde que le contenu éditorial.
+**Pour les URLs** : utilise WebFetch pour récupérer la page, puis convertis en markdown propre :
+- Supprime la navigation, sidebars, cookie banners, footers, pubs — ne garde que le contenu éditorial
+- Préserve la structure : titres, listes, tableaux, blocs de code, liens
+- Pour les pages très encombrées, concentre-toi sur le contenu dans `<article>` ou `<main>`
 
 **Pour les tweets/posts X (Twitter)** : X bloque le scraping direct. L'API oembed (`publish.twitter.com/oembed`) et la syndication (`cdn.syndication.twimg.com`) tronquent les "Note Tweets" (tweets longs) à ~275 caractères. La méthode fiable :
 1. Essayer d'abord `https://threadreaderapp.com/thread/{tweet_id}.html` via WebFetch — c'est la source la plus fiable pour le texte complet des tweets longs et threads.
 2. En fallback, essayer l'oembed : `https://publish.twitter.com/oembed?url={tweet_url}` — suffisant pour les tweets courts (<280 caractères).
 3. Si le champ `note_tweet` est présent dans la réponse syndication, c'est un tweet long et il faut Thread Reader App.
 
-**Pour les PDFs** : utilise le script `scripts/add_pdf.py` s'il est disponible, sinon lis le PDF avec les outils disponibles et extrais le texte page par page.
+**Pour les PDFs** : utilise l'outil Read qui supporte nativement les fichiers PDF :
+- Pour les PDFs volumineux (>10 pages), lis par tranches de pages (ex: `pages: "1-10"`, puis `"11-20"`)
+- Structure le markdown avec des titres `## Page N` pour la navigation
+- Si le Read échoue (PDF scanné sans OCR), informe l'utilisateur et suggère des alternatives OCR
+
+**Pour les vidéos YouTube** : demande à l'utilisateur de coller la transcription, ou tente de récupérer les sous-titres via les endpoints de transcription connus.
 
 **Pour les notes** : demande à l'utilisateur le contenu ou le titre, et crée le fichier directement.
 

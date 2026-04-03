@@ -19,5 +19,4 @@ Quand tu recherches dans cette base :
 3. Croise les informations de plusieurs sources quand c'est pertinent
 4. Cite toujours tes sources avec le titre et le chemin du document
 
-Pour enrichir cet index, lance : `python scripts/rebuild_index.py`
-Puis demande à l'agent IA de compléter les résumés marqués "_À compléter_".
+Pour reconstruire cet index, demande à l'agent : "reconstruis l'index"
