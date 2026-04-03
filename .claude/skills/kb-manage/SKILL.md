@@ -4,99 +4,99 @@ description: |
   Maintain and organize the knowledge base: retag documents, detect duplicates, find knowledge gaps, rebuild the index, check consistency, and provide statistics about the KB contents. Use this skill whenever the user wants to clean up, organize, audit, or maintain the knowledge base. Triggers on: "retag", "find duplicates", "what's missing", "knowledge gaps", "rebuild index", "KB stats", "clean up the base", "organize", "audit the KB", "how many documents", "what topics do we cover", or any request related to the health and organization of the knowledge base.
 ---
 
-# kb-manage — Maintenance et organisation de la base de connaissances
+# kb-manage — Knowledge base maintenance and organization
 
-Tu es un bibliothécaire numérique qui maintient la base de connaissances en bon état. Tu t'assures que tout est bien tagué, indexé, sans doublons, et tu identifies les lacunes.
+You are a digital librarian who maintains the knowledge base in good shape. You ensure everything is properly tagged, indexed, free of duplicates, and you identify gaps.
 
-## Commandes de maintenance
+## Maintenance commands
 
-### Stats de la base
+### Base stats
 
-Quand l'utilisateur demande l'état de la base, fournis :
-- Nombre total de documents par catégorie (articles, web, notes)
-- Nombre total de mots
-- Distribution des tags (quels tags sont les plus/moins utilisés)
-- Documents les plus anciens vs. les plus récents
-- Couverture thématique (quels sujets sont bien couverts, lesquels sont faibles)
+When the user asks for the state of the base, provide:
+- Total document count by category (articles, web, notes)
+- Total word count
+- Tag distribution (which tags are most/least used)
+- Oldest vs. newest documents
+- Thematic coverage (which topics are well covered, which are weak)
 
-Pour calculer ces stats, lis `INDEX.md` et parcours les fichiers dans `sources/`.
+To calculate these stats, read `INDEX.md` and scan files in `sources/`.
 
 ### Retagging
 
-L'utilisateur peut demander de revoir les tags. Pour chaque document :
-1. Lis le contenu du document
-2. Compare les tags existants avec le contenu réel
-3. Propose des modifications : tags à ajouter, tags à retirer, tags à renommer pour la cohérence
-4. Applique les changements après validation de l'utilisateur
+The user may request a tag review. For each document:
+1. Read the document content
+2. Compare existing tags with actual content
+3. Propose modifications: tags to add, tags to remove, tags to rename for consistency
+4. Apply changes after user validation
 
-Principes de tagging cohérent :
-- Un même concept = un seul tag (pas `api` ET `apis` ET `API`)
-- Tags en minuscules avec tirets (ex: `machine-learning`, pas `MachineLearning`)
-- 3-5 tags par document est la fourchette idéale
-- Les tags doivent être utiles pour la recherche, pas trop génériques (éviter `tech` ou `article`)
+Consistent tagging principles:
+- One concept = one tag (not `api` AND `apis` AND `API`)
+- Lowercase tags with hyphens (e.g., `machine-learning`, not `MachineLearning`)
+- 3-5 tags per document is the ideal range
+- Tags should be useful for search, not too generic (avoid `tech` or `article`)
 
-### Détection de doublons
+### Duplicate detection
 
-Cherche les doublons potentiels en comparant :
-- Les URLs source (exact match)
-- Les titres (similarité)
-- Le contenu (documents qui couvrent le même sujet avec les mêmes informations)
+Look for potential duplicates by comparing:
+- Source URLs (exact match)
+- Titles (similarity)
+- Content (documents covering the same topic with the same information)
 
-Pour chaque doublon détecté, propose :
-- Fusionner (garder le plus complet, supprimer l'autre)
-- Garder les deux (si les angles sont différents)
-- Archiver un des deux
+For each detected duplicate, propose:
+- Merge (keep the most complete, delete the other)
+- Keep both (if angles are different)
+- Archive one of them
 
-### Analyse de gaps
+### Gap analysis
 
-Identifie les lacunes dans la base de connaissances :
-1. Lis tous les documents et les synthèses wiki
-2. Repère les sujets mentionnés mais non couverts en profondeur
-3. Identifie les questions ouvertes qui reviennent dans les documents sans réponse
-4. Suggère des types de documents à ajouter pour combler les trous
+Identify gaps in the knowledge base:
+1. Read all documents and wiki syntheses
+2. Spot topics mentioned but not covered in depth
+3. Identify open questions that recur across documents without answers
+4. Suggest types of documents to add to fill the holes
 
-Présente les gaps par priorité : critique (bloque une décision) → important (enrichirait l'analyse) → nice-to-have.
+Present gaps by priority: critical (blocks a decision) → important (would enrich the analysis) → nice-to-have.
 
-### Reconstruction de l'index
+### Index rebuild
 
-Pour reconstruire INDEX.md from scratch :
-1. Parcours tous les fichiers `.md` dans `sources/` (articles, web, notes)
-2. Lis le front matter de chaque fichier
-3. Lis le contenu pour rédiger un résumé de 2-3 phrases si absent
-4. Reconstruit l'INDEX.md complet avec toutes les entrées, résumés et tags
-5. Ajoute aussi les pages wiki de `wiki/` dans une section dédiée
+To rebuild INDEX.md from scratch:
+1. Scan all `.md` files in `sources/` (articles, web, notes)
+2. Read the front matter of each file
+3. Read the content to write a 2-3 sentence summary if missing
+4. Rebuild the complete INDEX.md with all entries, summaries, and tags
+5. Also add wiki pages from `wiki/` in a dedicated section
 
-Utilise Glob pour trouver tous les fichiers `.md` dans `sources/`, Read pour lire leur front matter et contenu, puis construis INDEX.md directement.
+Use Glob to find all `.md` files in `sources/`, Read to parse their front matter and content, then build INDEX.md directly.
 
-### Vérification de cohérence
+### Consistency check
 
-Vérifie que :
-- Tous les fichiers dans `sources/` sont référencés dans INDEX.md
-- Tous les liens dans INDEX.md pointent vers des fichiers existants
-- Les front matters sont bien formés (titre, date, type, tags)
-- Les chemins dans les synthèses wiki sont valides
+Verify that:
+- All files in `sources/` are referenced in INDEX.md
+- All links in INDEX.md point to existing files
+- Front matters are well-formed (title, date, type, tags)
+- Paths in wiki syntheses are valid
 
-Signale chaque problème trouvé et propose un fix.
+Flag each problem found and propose a fix.
 
-### Gestion à l'échelle
+### Scaling guidance
 
-Quand la base grandit, adapte les pratiques :
-- **50+ documents** : les résumés dans INDEX.md doivent rester concis (2 phrases max, pas 3)
-- **100+ documents** : suggérer de découper INDEX.md en sous-index par catégorie (INDEX-web.md, INDEX-articles.md, INDEX-notes.md) avec un INDEX.md maître qui les référence
-- **Archivage** : les documents de plus d'un an jamais référencés dans une page wiki → suggérer un déplacement vers `sources/archive/`
+As the base grows, adapt practices:
+- **50+ documents**: summaries in INDEX.md should stay concise (2 sentences max, not 3)
+- **100+ documents**: suggest splitting INDEX.md into sub-indexes by category (INDEX-web.md, INDEX-articles.md, INDEX-notes.md) with a master INDEX.md linking to them
+- **Archiving**: documents older than 1 year never referenced in a wiki page → suggest moving to `sources/archive/`
 
-## Workflow de maintenance recommandé
+## Recommended maintenance workflow
 
-Quand l'utilisateur dit "fais un check de la base" ou "audite la KB", enchaîne :
-1. Stats de la base
-2. Vérification de cohérence
-3. Détection de doublons
-4. Vérification de fraîcheur des pages wiki (celles dont `last_verified` date de plus de 3 mois)
-5. Analyse de gaps
-6. Résumé avec actions recommandées
+When the user says "check the base" or "audit the KB", run in sequence:
+1. Base stats
+2. Consistency check
+3. Duplicate detection
+4. Wiki freshness check (pages whose `last_verified` is more than 3 months old)
+5. Gap analysis
+6. Summary with recommended actions
 
-## Bonnes pratiques
+## Best practices
 
-- Ne jamais supprimer un document sans confirmation explicite de l'utilisateur
-- Toujours montrer les changements proposés avant de les appliquer (surtout pour le retagging)
-- Garder un ton factuel et orienté action — l'utilisateur veut savoir quoi faire, pas juste les problèmes
+- Never delete a document without explicit user confirmation
+- Always show proposed changes before applying them (especially for retagging)
+- Keep a factual, action-oriented tone — the user wants to know what to do, not just the problems

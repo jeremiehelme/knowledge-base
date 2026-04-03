@@ -4,137 +4,137 @@ description: |
   Ingest documents into the knowledge base: convert URLs to markdown, convert PDFs to markdown, add notes, tag documents, and auto-update the INDEX.md. Use this skill whenever the user wants to add a document, article, URL, PDF, web page, or note to the knowledge base. Also triggers when the user says "ingest", "add to KB", "clip this", "save this article", "import this PDF", or any variation of adding content to the project knowledge base. Even if the user just pastes a URL or mentions a document they want to remember, this skill should activate.
 ---
 
-# kb-ingest — Ingestion de documents dans la base de connaissances
+# kb-ingest — Document ingestion into the knowledge base
 
-Tu es un agent spécialisé dans l'ajout de documents à une base de connaissances structurée en fichiers markdown, inspirée de l'approche d'Andrej Karpathy.
+You are an agent specialized in adding documents to a markdown-based knowledge base, inspired by Andrej Karpathy's approach.
 
-## Structure de la base
+## Base structure
 
-La base de connaissances est organisée ainsi dans le dossier courant :
+The knowledge base is organized as follows in the current directory:
 
 ```
 sources/
-├── articles/    ← PDFs convertis en markdown
-├── web/         ← Pages web converties en markdown
-└── notes/       ← Notes manuelles, CR de réunions
-INDEX.md          ← Index maître avec résumés et tags
+├── articles/    ← PDFs converted to markdown
+├── web/         ← Web pages converted to markdown
+└── notes/       ← Manual notes, meeting minutes
+INDEX.md          ← Master index with summaries and tags
 ```
 
-## Comment ingérer un document
+## How to ingest a document
 
-### 1. Identifier le type de document
+### 1. Identify the document type
 
-L'utilisateur peut fournir :
-- **Une URL** → Extraire le contenu web et le convertir en markdown
-- **Un fichier PDF** → Extraire le texte et le convertir en markdown
-- **Du texte brut / une note** → Créer directement un fichier markdown
-- **Plusieurs documents d'un coup** → Les traiter un par un
+The user may provide:
+- **A URL** → Extract web content and convert to markdown
+- **A PDF file** → Extract text and convert to markdown
+- **Raw text / a note** → Create a markdown file directly
+- **Multiple documents at once** → Process them one by one
 
-### 2. Convertir en markdown
+### 2. Convert to markdown
 
-Pour chaque document, crée un fichier markdown avec ce format :
+For each document, create a markdown file with this format:
 
 ```markdown
 ---
-title: "Titre du document"
-source_url: https://... (si applicable)
-source_file: nom.pdf (si applicable)
+title: "Document title"
+source_url: https://... (if applicable)
+source_file: name.pdf (if applicable)
 added_date: YYYY-MM-DD
 type: web | pdf | note
 tags: [tag1, tag2, tag3]
-author: "Auteur" (si connu)
-publication_date: YYYY-MM-DD (si connue)
+author: "Author" (if known)
+publication_date: YYYY-MM-DD (if known)
 ---
 
-# Titre du document
+# Document title
 
-[Contenu extrait/converti ici]
+[Extracted/converted content here]
 ```
 
-**Nommage des fichiers** : `YYYY-MM-DD-titre-en-slug.md`
+**File naming**: `YYYY-MM-DD-title-as-slug.md`
 
-**Emplacement** :
-- URLs / pages web → `sources/web/`
+**Location**:
+- URLs / web pages → `sources/web/`
 - PDFs → `sources/articles/`
-- Notes / texte brut → `sources/notes/`
+- Notes / raw text → `sources/notes/`
 
-### 3. Extraction de contenu
+### 3. Content extraction
 
-**Pour les URLs** : utilise WebFetch pour récupérer la page, puis convertis en markdown propre :
-- Supprime la navigation, sidebars, cookie banners, footers, pubs — ne garde que le contenu éditorial
-- Préserve la structure : titres, listes, tableaux, blocs de code, liens
-- Pour les pages très encombrées, concentre-toi sur le contenu dans `<article>` ou `<main>`
+**For URLs**: use WebFetch to retrieve the page, then convert to clean markdown:
+- Remove navigation, sidebars, cookie banners, footers, ads — keep only editorial content
+- Preserve structure: headings, lists, tables, code blocks, links
+- For very cluttered pages, focus on content within `<article>` or `<main>`
 
-**Pour les tweets/posts X (Twitter)** : X bloque le scraping direct. L'API oembed (`publish.twitter.com/oembed`) et la syndication (`cdn.syndication.twimg.com`) tronquent les "Note Tweets" (tweets longs) à ~275 caractères. La méthode fiable :
-1. Essayer d'abord `https://threadreaderapp.com/thread/{tweet_id}.html` via WebFetch — c'est la source la plus fiable pour le texte complet des tweets longs et threads.
-2. En fallback, essayer l'oembed : `https://publish.twitter.com/oembed?url={tweet_url}` — suffisant pour les tweets courts (<280 caractères).
-3. Si le champ `note_tweet` est présent dans la réponse syndication, c'est un tweet long et il faut Thread Reader App.
+**For tweets/X posts**: X blocks direct scraping. The oembed API (`publish.twitter.com/oembed`) and syndication (`cdn.syndication.twimg.com`) truncate "Note Tweets" (long tweets) to ~275 characters. The reliable method:
+1. First try `https://threadreaderapp.com/thread/{tweet_id}.html` via WebFetch — this is the most reliable source for full text of long tweets and threads.
+2. As fallback, try oembed: `https://publish.twitter.com/oembed?url={tweet_url}` — sufficient for short tweets (<280 characters).
+3. If the `note_tweet` field is present in the syndication response, it's a long tweet and Thread Reader App is needed.
 
-**Pour les PDFs** : utilise l'outil Read qui supporte nativement les fichiers PDF :
-- Pour les PDFs volumineux (>10 pages), lis par tranches de pages (ex: `pages: "1-10"`, puis `"11-20"`)
-- Structure le markdown avec des titres `## Page N` pour la navigation
-- Si le Read échoue (PDF scanné sans OCR), informe l'utilisateur et suggère des alternatives OCR
+**For PDFs**: use the Read tool which natively supports PDF files:
+- For large PDFs (>10 pages), read in page ranges (e.g., `pages: "1-10"`, then `"11-20"`)
+- Structure the markdown with `## Page N` headings for navigation
+- If Read fails (scanned PDF without OCR), inform the user and suggest OCR alternatives
 
-**Pour les vidéos YouTube** : demande à l'utilisateur de coller la transcription, ou tente de récupérer les sous-titres via les endpoints de transcription connus.
+**For YouTube videos**: ask the user to paste the transcript, or attempt to retrieve subtitles via known transcript endpoints.
 
-**Pour les notes** : demande à l'utilisateur le contenu ou le titre, et crée le fichier directement.
+**For notes**: ask the user for the content or title, and create the file directly.
 
-### Gestion des erreurs
+### Error handling
 
 | Situation | Action |
 |---|---|
-| WebFetch échoue (timeout, 403, 404) | Informe l'utilisateur, suggère de réessayer plus tard ou de fournir le contenu manuellement comme note |
-| HTML inexploitable (trop de bruit, pas de contenu clair) | Demande à l'utilisateur de coller le texte de l'article directement |
-| PDF illisible (scanné sans OCR, chiffré) | Informe l'utilisateur, suggère un outil OCR ou l'extraction manuelle du texte |
-| Contenu derrière un paywall / login | Informe l'utilisateur, suggère de sauvegarder en PDF d'abord ou de coller le contenu |
-| Extraction trop courte (<50 mots) | Préviens que l'extraction semble incomplète, demande de vérifier |
-| Doublon détecté (même URL dans INDEX.md) | Préviens l'utilisateur, demande s'il faut mettre à jour l'existant ou créer une nouvelle entrée |
+| WebFetch fails (timeout, 403, 404) | Inform the user, suggest trying later or providing content manually as a note |
+| Unusable HTML (too much noise, no clear content) | Ask the user to paste the article text directly |
+| Unreadable PDF (scanned without OCR, encrypted) | Inform the user, suggest an OCR tool or manual text extraction |
+| Content behind a paywall / login | Inform the user, suggest saving as PDF first or pasting the content |
+| Extraction too short (<50 words) | Warn that extraction seems incomplete, ask to verify |
+| Duplicate detected (same URL in INDEX.md) | Warn the user, ask whether to update existing or create a new entry |
 
-### 4. Tagging intelligent
+### 4. Smart tagging
 
-Quand l'utilisateur ne fournit pas de tags, propose-en 3-5 basés sur le contenu. Les tags doivent être :
-- En minuscules, sans espaces (utilise des tirets)
-- Cohérents avec les tags existants dans INDEX.md (lis-le d'abord pour voir les tags déjà utilisés)
-- Assez spécifiques pour être utiles à la recherche
+When the user doesn't provide tags, suggest 3-5 based on the content. Tags should be:
+- Lowercase, no spaces (use hyphens)
+- Consistent with existing tags in INDEX.md (read it first to see tags already in use)
+- Specific enough to be useful for search
 
-### 5. Mettre à jour INDEX.md
+### 5. Update INDEX.md
 
-Après chaque ingestion, mets à jour `INDEX.md` :
+After each ingestion, update `INDEX.md`:
 
-1. Lis l'INDEX.md actuel
-2. Ajoute une entrée pour le nouveau document dans la bonne catégorie
-3. Inclus : titre, date, tags, nombre de mots, et un **résumé de 2-3 phrases** que tu rédiges toi-même après avoir lu le contenu
-4. Si le document est lié à d'autres documents de la base, mentionne les liens croisés
+1. Read the current INDEX.md
+2. Add an entry for the new document in the right category
+3. Include: title, date, tags, word count, and a **2-3 sentence summary** that you write yourself after reading the content
+4. If the document is related to other documents in the base, mention cross-references
 
-Le résumé est crucial — c'est ce qui permet à l'agent de recherche de savoir si le document est pertinent sans avoir à le lire en entier.
+The summary is crucial — it's what allows the search agent to know if the document is relevant without reading it entirely.
 
-### 6. Confirmer à l'utilisateur
+### 6. Confirm to the user
 
-Après l'ingestion, affiche un récapitulatif :
-- Titre du document
-- Chemin du fichier créé
-- Tags assignés
-- Nombre de mots
-- Résumé généré
+After ingestion, display a recap:
+- Document title
+- Created file path
+- Assigned tags
+- Word count
+- Generated summary
 
-## Ingestion en lot
+## Batch ingestion
 
-Si l'utilisateur donne plusieurs URLs ou documents d'un coup, traite-les séquentiellement et affiche un tableau récapitulatif à la fin :
+If the user provides multiple URLs or documents at once, process them sequentially and display a summary table at the end:
 
-| # | Titre | Type | Tags | Mots |
-|---|-------|------|------|------|
-| 1 | ...   | web  | ...  | ...  |
-| 2 | ...   | pdf  | ...  | ...  |
+| # | Title | Type | Tags | Words |
+|---|-------|------|------|-------|
+| 1 | ...   | web  | ...  | ...   |
+| 2 | ...   | pdf  | ...  | ...   |
 
-## Bonnes pratiques
+## Best practices
 
-- Toujours lire INDEX.md en premier pour connaître les tags existants et maintenir la cohérence
-- **Détection de doublons avant ingestion** :
-  1. Chercher `source_url` dans INDEX.md — correspondance exacte = doublon certain
-  2. Comparer le titre slugifié — correspondance = doublon probable
-  3. Si doublon trouvé : montrer l'entrée existante à l'utilisateur et demander :
-     - **Ignorer** (ne pas ajouter)
-     - **Mettre à jour** (remplacer le contenu, garder le même fichier)
-     - **Ajouter quand même** (angle différent sur le même sujet)
-- Pour les contenus très longs (> 10000 mots), ajouter un résumé exécutif au début du fichier markdown en plus du résumé dans l'index
-- Préserver les tableaux, listes et structure du document original autant que possible
+- Always read INDEX.md first to know existing tags and maintain consistency
+- **Duplicate detection before ingestion**:
+  1. Search `source_url` in INDEX.md — exact match = definite duplicate
+  2. Compare slugified title — match = likely duplicate
+  3. If duplicate found: show the existing entry to the user and ask:
+     - **Skip** (don't add)
+     - **Update** (replace content, keep same file)
+     - **Add anyway** (different angle on the same topic)
+- For very long content (> 10000 words), add an executive summary at the top of the markdown file in addition to the summary in the index
+- Preserve tables, lists, and structure from the original document as much as possible

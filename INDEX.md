@@ -1,22 +1,20 @@
-# 📚 INDEX — Base de Connaissances
+# INDEX — Knowledge Base
 
-> Dernière mise à jour: 2026-04-03 15:56
-> Documents: 0 | Mots total: ~0
-
----
-
-
-
-
+> Last updated: 2026-04-03 15:56
+> Documents: 0 | Total words: ~0
 
 ---
 
-## 🤖 Notes pour l'Agent IA
 
-Quand tu recherches dans cette base :
-1. Lis d'abord cet INDEX.md pour identifier les documents pertinents
-2. Consulte ensuite les documents spécifiques via leur chemin relatif
-3. Croise les informations de plusieurs sources quand c'est pertinent
-4. Cite toujours tes sources avec le titre et le chemin du document
 
-Pour reconstruire cet index, demande à l'agent : "reconstruis l'index"
+---
+
+## Notes for the AI Agent
+
+When searching this base:
+1. Read this INDEX.md first to identify relevant documents
+2. Then consult specific documents via their relative path
+3. Cross-reference information from multiple sources when relevant
+4. Always cite your sources with the title and document path
+
+To rebuild this index, ask the agent: "rebuild the index"

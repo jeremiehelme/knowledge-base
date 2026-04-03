@@ -1,79 +1,79 @@
 # Knowledge Base — Workshop Brainstorm
 
-Base de connaissances collaborative pour agreger, indexer et exploiter les documents d'un projet via un agent IA.
+Collaborative knowledge base to aggregate, index, and leverage project documents via an AI agent.
 
-Inspire de [l'approche d'Andrej Karpathy](https://x.com/karpathy/status/2039805659525644595) : pas de RAG complexe, juste des fichiers markdown bien structures + un index intelligent que le LLM sait naviguer.
+Inspired by [Andrej Karpathy's approach](https://x.com/karpathy/status/2039805659525644595): no complex RAG, just well-structured markdown files + an intelligent index that the LLM knows how to navigate.
 
 ## Quick Start
 
-### 1. Ouvrir le projet avec Claude Code
+### 1. Open the project with Claude Code
 
 ```bash
 cd knowledge-base
 claude
 ```
 
-Aucune installation requise. Toutes les operations utilisent les outils natifs de Claude (WebFetch, Read, Write, Glob, Grep).
+No installation required. All operations use Claude's native tools (WebFetch, Read, Write, Glob, Grep).
 
-### 2. Ajouter des documents
+### 2. Add documents
 
-Parle naturellement a Claude :
-
-```
-ajoute https://example.com/article
-ajoute le PDF ~/Documents/rapport.pdf
-note que le client prefere l'option B pour le pricing
-```
-
-Claude extrait le contenu, le convertit en markdown, genere des tags intelligents, redige un resume, et met a jour l'index automatiquement.
-
-### 3. Interroger la base
+Talk naturally to Claude:
 
 ```
-que sait-on sur le pricing ?
-compare les options A et B selon nos sources
-prepare un briefing pour le workshop
+add https://example.com/article
+add the PDF ~/Documents/report.pdf
+note that the client prefers option B for pricing
 ```
 
-Claude croise les sources, cite ses references, et signale les contradictions.
+Claude extracts the content, converts it to markdown, generates smart tags, writes a summary, and updates the index automatically.
 
-## Structure du repo
+### 3. Query the base
+
+```
+what do we know about pricing?
+compare options A and B from our sources
+prepare a briefing for the workshop
+```
+
+Claude cross-references sources, cites its references, and flags contradictions.
+
+## Repo structure
 
 ```
 knowledge-base/
-├── INDEX.md               ← Index maitre (resumes + tags + liens)
+├── INDEX.md               ← Master index (summaries + tags + links)
 ├── sources/
-│   ├── articles/          ← PDFs convertis en markdown
-│   ├── web/               ← Pages web converties en markdown
-│   └── notes/             ← Notes manuelles, CR de reunions
-└── wiki/                  ← Syntheses thematiques generees
+│   ├── articles/          ← PDFs converted to markdown
+│   ├── web/               ← Web pages converted to markdown
+│   └── notes/             ← Manual notes, meeting minutes
+└── wiki/                  ← Generated thematic syntheses
 ```
 
-## Les 4 operations
+## The 4 operations
 
-| Commande | Ce qui se passe |
+| Command | What happens |
 |---|---|
-| `ajoute [url/pdf/note]` | **Ingestion** — extrait, tague, resume, indexe |
-| `que sait-on sur X ?` | **Recherche** — croise les sources, cite tout |
-| `fais une synthese sur X` | **Synthese** — cree une page wiki structuree et sourcee |
-| `audite la base` | **Maintenance** — stats, doublons, coherence, gaps |
+| `add [url/pdf/note]` | **Ingestion** — extracts, tags, summarizes, indexes |
+| `what do we know about X?` | **Search** — cross-references sources, cites everything |
+| `synthesize X` | **Synthesis** — creates a structured, sourced wiki page |
+| `audit the base` | **Maintenance** — stats, duplicates, consistency, gaps |
 
-## Workflow recommande
+## Recommended workflow
 
-1. **Avant le workshop** : chaque participant ajoute ses documents/URLs
-2. **Enrichir** : demander des syntheses thematiques dans `wiki/`
-3. **Pendant le workshop** : utiliser l'agent pour rechercher et croiser les connaissances en temps reel
+1. **Before the workshop**: each participant adds their documents/URLs
+2. **Enrich**: request thematic syntheses in `wiki/`
+3. **During the workshop**: use the agent to search and cross-reference knowledge in real time
 
-## Utilisation avec Claude Code
+## Using with Claude Code
 
 ```bash
 cd knowledge-base
-claude "Lis INDEX.md et resume les 5 documents les plus importants pour notre decision d'architecture"
+claude "Read INDEX.md and summarize the 5 most important documents for our architecture decision"
 ```
 
-## Contribuer
+## Contributing
 
-1. Clone le repo
-2. Ajoute tes documents en parlant a Claude
-3. Commit et push
-4. Les autres membres peuvent pull et interroger la base mise a jour
+1. Clone the repo
+2. Add your documents by talking to Claude
+3. Commit and push
+4. Other members can pull and query the updated base

@@ -1,93 +1,93 @@
-# Knowledge Base — Instructions pour Claude
+# Knowledge Base — Instructions for Claude
 
-Tu travailles dans une base de connaissances projet structurée en fichiers markdown, inspirée de l'approche d'Andrej Karpathy. Cette base sert à agréger, indexer et exploiter les documents d'un projet pour préparer des workshops de brainstorm et prendre des décisions business et techniques.
+You work in a project knowledge base structured as markdown files, inspired by Andrej Karpathy's approach. This base is used to aggregate, index, and leverage project documents for brainstorm workshops and business/technical decisions.
 
-## Structure du projet
+## Project structure
 
 ```
-INDEX.md              ← Index maître : résumés, tags et liens de chaque document
+INDEX.md              ← Master index: summaries, tags, and links for each document
 sources/
-├── articles/         ← PDFs convertis en markdown
-├── web/              ← Pages web converties en markdown
-└── notes/            ← Notes manuelles, CR de réunions
-wiki/                 ← Synthèses thématiques générées
+├── articles/         ← PDFs converted to markdown
+├── web/              ← Web pages converted to markdown
+└── notes/            ← Manual notes, meeting minutes
+wiki/                 ← Generated thematic syntheses
 ```
 
-## Principe fondamental
+## Core principle
 
-**INDEX.md est le point d'entrée de tout.** Lis-le en premier pour chaque tâche. Il contient les résumés et tags de tous les documents — c'est ta carte du territoire.
+**INDEX.md is the entry point for everything.** Read it first for every task. It contains summaries and tags for all documents — it's your map of the territory.
 
-## Comment interpréter les demandes de l'utilisateur
+## How to interpret user requests
 
-### Ingestion de documents
+### Document ingestion
 
-Quand l'utilisateur dit des choses comme :
-- "ajoute [url]", "ingère cette page", "clip cet article", "sauvegarde ce lien"
-- "ajoute ce PDF", "importe ce document"
-- "note que...", "ajoute une note sur..."
+When the user says things like:
+- "add [url]", "ingest this page", "clip this article", "save this link"
+- "add this PDF", "import this document"
+- "note that...", "add a note about..."
 
-→ Lis la skill `.claude/skills/kb-ingest/SKILL.md` et suis ses instructions.
+→ Read the skill `.claude/skills/kb-ingest/SKILL.md` and follow its instructions.
 
-En résumé : convertis le contenu en markdown, sauvegarde dans le bon sous-dossier de `sources/`, tague intelligemment (en cohérence avec les tags existants dans INDEX.md), rédige un résumé, et mets à jour INDEX.md.
+In short: convert the content to markdown, save in the right subfolder of `sources/`, tag intelligently (consistent with existing tags in INDEX.md), write a summary, and update INDEX.md.
 
-### Recherche et questions
+### Search and questions
 
-Quand l'utilisateur dit des choses comme :
-- "que sait-on sur X ?", "cherche Y dans la base", "trouve les docs sur Z"
-- "quelles sont nos sources sur...", "qu'est-ce qu'on a comme info sur..."
-- Toute question dont la réponse pourrait se trouver dans les documents collectés
+When the user says things like:
+- "what do we know about X?", "search Y in the base", "find docs about Z"
+- "what are our sources on...", "what info do we have about..."
+- Any question whose answer could be found in the collected documents
 
-→ Lis la skill `.claude/skills/kb-search/SKILL.md` et suis ses instructions.
+→ Read the skill `.claude/skills/kb-search/SKILL.md` and follow its instructions.
 
-En résumé : lis INDEX.md, identifie les documents pertinents, lis-les en profondeur, croise les sources, et cite toujours d'où vient l'info.
+In short: read INDEX.md, identify relevant documents, read them in depth, cross-reference sources, and always cite where the info comes from.
 
-### Synthèses et analyses
+### Syntheses and analyses
 
-Quand l'utilisateur dit des choses comme :
-- "fais une synthèse sur...", "crée une page wiki sur..."
-- "compare les options pour...", "matrice de décision sur..."
-- "prépare un briefing pour le workshop"
+When the user says things like:
+- "synthesize...", "create a wiki page about..."
+- "compare options for...", "decision matrix for..."
+- "prepare a briefing for the workshop"
 
-→ Lis la skill `.claude/skills/kb-synthesize/SKILL.md` et suis ses instructions.
+→ Read the skill `.claude/skills/kb-synthesize/SKILL.md` and follow its instructions.
 
-En résumé : produis un document structuré et sourcé dans `wiki/`, mets à jour INDEX.md.
+In short: produce a structured, sourced document in `wiki/`, update INDEX.md.
 
-### Maintenance de la base
+### Base maintenance
 
-Quand l'utilisateur dit des choses comme :
-- "audite la base", "stats de la KB", "combien de docs on a ?"
-- "retague les documents", "trouve les doublons", "qu'est-ce qui manque ?"
-- "reconstruis l'index"
+When the user says things like:
+- "audit the base", "KB stats", "how many docs do we have?"
+- "retag the documents", "find duplicates", "what's missing?"
+- "rebuild the index"
 
-→ Lis la skill `.claude/skills/kb-manage/SKILL.md` et suis ses instructions.
+→ Read the skill `.claude/skills/kb-manage/SKILL.md` and follow its instructions.
 
-## Règles générales
+## General rules
 
-- **Toujours citer les sources** avec le format : **[Titre]** (`sources/categorie/fichier.md`)
-- **Ne jamais inventer** d'information qui n'est pas dans les documents
-- **Cohérence des tags** : avant de tagger, lis INDEX.md pour voir les tags existants et les réutiliser
-- **Markdown front matter** : chaque fichier source a un front matter YAML (title, date, type, tags)
-- **Pas de dépendance externe** : toutes les opérations (ingestion, recherche, synthèse, maintenance) utilisent les outils natifs de Claude (WebFetch, Read, Write, Edit, Glob, Grep)
+- **Always cite sources** using the format: **[Title]** (`sources/category/file.md`)
+- **Never invent** information that is not in the documents
+- **Tag consistency**: before tagging, read INDEX.md to see existing tags and reuse them
+- **Markdown front matter**: every source file has a YAML front matter (title, date, type, tags)
+- **No external dependencies**: all operations (ingestion, search, synthesis, maintenance) use Claude's native tools (WebFetch, Read, Write, Edit, Glob, Grep)
 
-## Responsabilites des skills
+## Skill responsibilities
 
-| Responsabilite | Skill proprietaire |
+| Responsibility | Owner skill |
 |---|---|
-| Creer des fichiers dans sources/ | kb-ingest |
-| Mettre a jour INDEX.md (ajout d'entree) | kb-ingest |
-| Reconstruire INDEX.md from scratch | kb-manage |
-| Creer/mettre a jour des pages wiki/ | kb-synthesize |
-| Verifier la coherence de l'index | kb-manage |
-| Lire et croiser les sources | kb-search |
+| Create files in sources/ | kb-ingest |
+| Update INDEX.md (add entry) | kb-ingest |
+| Rebuild INDEX.md from scratch | kb-manage |
+| Create/update wiki/ pages | kb-synthesize |
+| Verify index consistency | kb-manage |
+| Read and cross-reference sources | kb-search |
 
-## Exemples de commandes naturelles
+## Natural command examples
 
-| Ce que dit l'utilisateur | Ce que tu fais |
+| What the user says | What you do |
 |---|---|
-| `ajoute https://example.com/article` | Ingestion → skill kb-ingest |
-| `ajoute le PDF rapport.pdf` | Ingestion → skill kb-ingest |
-| `que sait-on sur le pricing ?` | Recherche → skill kb-search |
-| `compare React vs Vue selon nos sources` | Synthèse → skill kb-synthesize |
-| `prépare le briefing du workshop` | Synthèse → skill kb-synthesize |
-| `combien de docs on a ?` | Maintenance → skill kb-manage |
-| `quels sujets ne sont pas couverts ?` | Maintenance → skill kb-manage (gap analysis) |
+| `add https://example.com/article` | Ingestion → skill kb-ingest |
+| `add the PDF report.pdf` | Ingestion → skill kb-ingest |
+| `what do we know about pricing?` | Search → skill kb-search |
+| `compare React vs Vue from our sources` | Synthesis → skill kb-synthesize |
+| `prepare the workshop briefing` | Synthesis → skill kb-synthesize |
+| `how many docs do we have?` | Maintenance → skill kb-manage |
+| `what topics aren't covered?` | Maintenance → skill kb-manage (gap analysis) |

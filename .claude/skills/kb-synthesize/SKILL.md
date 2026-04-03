@@ -4,119 +4,120 @@ description: |
   Generate thematic wiki pages, cross-reference analyses, comparison tables, and briefing documents from the knowledge base. Use this skill whenever the user wants to create a synthesis, summary, wiki page, comparison, decision matrix, briefing doc, or any structured analysis that draws from multiple documents in the knowledge base. Triggers on: "synthesize", "create a wiki page about", "compare our options for", "prepare a briefing on", "cross-reference", "create a summary of everything we know about", "prepare the workshop", "decision matrix", or any request to produce analytical output from the collected knowledge.
 ---
 
-# kb-synthesize — Synthèse et production de connaissances
+# kb-synthesize — Knowledge synthesis and production
 
-Tu es un analyste qui produit des synthèses structurées à partir de la base de connaissances du projet. Ton rôle est de transformer des documents bruts en connaissances exploitables pour le workshop de brainstorm.
+You are an analyst who produces structured syntheses from the project's knowledge base. Your role is to transform raw documents into actionable knowledge for brainstorm workshops.
 
-## Types de synthèse
+## Synthesis types
 
-### 1. Page Wiki thématique
+### 1. Thematic wiki page
 
-Quand l'utilisateur demande une synthèse sur un thème (ex: "résume tout ce qu'on sait sur l'architecture"), crée un fichier dans `wiki/` :
+When the user requests a synthesis on a theme (e.g., "summarize everything we know about architecture"), create a file in `wiki/`:
 
 ```markdown
 ---
-title: "Synthèse : [Thème]"
+title: "Synthesis: [Theme]"
 generated_date: YYYY-MM-DD
+last_verified: YYYY-MM-DD
 sources_count: N
 tags: [tag1, tag2]
 ---
 
-# [Thème]
+# [Theme]
 
-## Contexte
-[Pourquoi ce sujet est important pour le projet]
+## Context
+[Why this topic matters for the project]
 
-## Points clés
-[Les insights majeurs, avec citations des sources]
+## Key points
+[Major insights, with source citations]
 
-## Points de convergence
-[Ce sur quoi les sources sont d'accord]
+## Points of convergence
+[What sources agree on]
 
-## Points de divergence
-[Les contradictions ou débats entre sources]
+## Points of divergence
+[Contradictions or debates between sources]
 
-## Implications pour le projet
-[Ce que ça signifie concrètement pour les décisions à prendre]
+## Implications for the project
+[What this concretely means for decisions to be made]
 
-## Sources consultées
-- [Titre](chemin) — contribue à : [quels aspects]
+## Sources consulted
+- [Title](path) — contributes to: [which aspects]
 ```
 
-### 2. Tableau comparatif
+### 2. Comparison table
 
-Pour comparer des options (technologies, stratégies, approches), produis un tableau structuré :
+To compare options (technologies, strategies, approaches), produce a structured table:
 
 ```markdown
-| Critère | Option A | Option B | Option C |
-|---------|----------|----------|----------|
-| ...     | ...      | ...      | ...      |
+| Criterion | Option A | Option B | Option C |
+|-----------|----------|----------|----------|
+| ...       | ...      | ...      | ...      |
 ```
 
-Chaque cellule doit être sourcée. Ajoute une section "Analyse" après le tableau qui interprète les résultats.
+Each cell should be sourced. Add an "Analysis" section after the table that interprets the results.
 
-### 3. Matrice de décision
+### 3. Decision matrix
 
-Pour aider à un choix business ou technique :
-1. Liste les critères de décision (demande à l'utilisateur s'ils ne sont pas évidents)
-2. Liste les options identifiées dans les sources
-3. Évalue chaque option sur chaque critère en te basant sur les documents
-4. Pondère si l'utilisateur donne des priorités
-5. Fournis une recommandation argumentée
+To help with a business or technical choice:
+1. List decision criteria (ask the user if not obvious)
+2. List options identified in the sources
+3. Evaluate each option on each criterion based on the documents
+4. Weight if the user provides priorities
+5. Provide an argued recommendation
 
 ### 4. Briefing document
 
-Pour préparer le workshop, crée un document de briefing qui donne à chaque participant le contexte nécessaire :
-- Résumé exécutif (5-10 lignes)
-- État des lieux par thème
-- Questions ouvertes à trancher
-- Données clés à avoir en tête
+To prepare for the workshop, create a briefing document that gives each participant the necessary context:
+- Executive summary (5-10 lines)
+- State of affairs by theme
+- Open questions to resolve
+- Key data to keep in mind
 
-## Méthode de travail
+## Working method
 
-### Avant de produire
+### Before producing
 
-1. Lis `INDEX.md` pour cartographier les documents disponibles
-2. Identifie TOUS les documents liés au thème demandé (pas seulement les plus évidents)
-3. Lis chaque document pertinent en entier
-4. Vérifie si une synthèse existe déjà dans `wiki/` — si oui, mets-la à jour plutôt que d'en créer une nouvelle
+1. Read `INDEX.md` to map available documents
+2. Identify ALL documents related to the requested theme (not just the most obvious)
+3. Read each relevant document in full
+4. Check if a synthesis already exists in `wiki/` — if so, update it rather than creating a new one
 
-### Pendant la rédaction
+### During writing
 
-- Chaque affirmation factuelle doit être traçable à un document source
-- Utilise le format : **[Titre du doc]** pour les citations inline
-- Signale explicitement quand tu extrapoles ou analyses au-delà de ce que disent les sources
-- Privilégie la clarté sur l'exhaustivité — mieux vaut un document concis et actionnable qu'un pavé
+- Every factual assertion must be traceable to a source document
+- Use the format: **[Doc title]** for inline citations
+- Explicitly flag when you extrapolate or analyze beyond what sources say
+- Favor clarity over exhaustiveness — a concise, actionable document is better than a wall of text
 
-### Après la rédaction
+### After writing
 
-1. Sauvegarde le fichier dans `wiki/nom-du-theme.md`
-2. Mets à jour `INDEX.md` pour référencer la nouvelle synthèse (dans une section Wiki si elle existe, sinon crée-la)
-3. Affiche un résumé à l'utilisateur avec le chemin du fichier créé
+1. Save the file in `wiki/theme-name.md`
+2. Update `INDEX.md` to reference the new synthesis (in a Wiki section if it exists, otherwise create one)
+3. Display a summary to the user with the created file path
 
-## Formatage
+## Formatting
 
-- Les pages wiki doivent être lisibles en 5-10 minutes max
-- Utilise des titres clairs et une hiérarchie logique
-- Les tableaux sont très efficaces pour les comparaisons — utilise-les
-- Les listes à puces pour les points clés, la prose pour l'analyse
-- Mets en **gras** les conclusions et recommandations importantes
+- Wiki pages should be readable in 5-10 minutes max
+- Use clear headings and logical hierarchy
+- Tables are very effective for comparisons — use them
+- Bullet lists for key points, prose for analysis
+- **Bold** important conclusions and recommendations
 
-## Mise à jour incrémentale
+## Incremental updates
 
-Quand de nouveaux documents sont ajoutés à la base :
-- L'utilisateur peut demander "mets à jour la synthèse sur X"
-- Relis les nouveaux documents + la synthèse existante
-- Intègre les nouvelles informations sans perdre les analyses précédentes
-- Note la date de mise à jour dans le front matter
+When new documents are added to the base:
+- The user may request "update the synthesis on X"
+- Re-read the new documents + the existing synthesis
+- Integrate new information without losing previous analyses
+- Note the update date in the front matter
 
-## Cycle de vie des pages wiki
+## Wiki page lifecycle
 
-Chaque page wiki doit inclure `last_verified: YYYY-MM-DD` dans son front matter, mis à jour à chaque relecture/modification.
+Every wiki page must include `last_verified: YYYY-MM-DD` in its front matter, updated on every review/modification.
 
-**Fraîcheur** :
-- Quand de nouvelles sources sont ajoutées sur un sujet couvert par une page wiki existante, signaler que la synthèse est potentiellement obsolète
-- Les pages wiki dont `last_verified` date de plus de 3 mois sont considérées comme potentiellement obsolètes
-- Lors d'un audit (kb-manage), les pages obsolètes sont signalées avec une recommandation de relecture
+**Freshness**:
+- When new sources are added on a topic covered by an existing wiki page, flag that the synthesis is potentially stale
+- Wiki pages whose `last_verified` is more than 3 months old are considered potentially stale
+- During an audit (kb-manage), stale pages are flagged with a recommendation to review
 
-**Mise à jour** : relire les sources (y compris les nouvelles), mettre à jour le contenu, bumper `last_verified`
+**Updating**: re-read sources (including new ones), update content, bump `last_verified`
