@@ -11,7 +11,6 @@ sources/
 ├── web/              ← Pages web converties en markdown
 └── notes/            ← Notes manuelles, CR de réunions
 wiki/                 ← Synthèses thématiques générées
-.prompts/             ← Prompt système de référence
 ```
 
 ## Principe fondamental
@@ -69,6 +68,17 @@ Quand l'utilisateur dit des choses comme :
 - **Cohérence des tags** : avant de tagger, lis INDEX.md pour voir les tags existants et les réutiliser
 - **Markdown front matter** : chaque fichier source a un front matter YAML (title, date, type, tags)
 - **Pas de dépendance externe** : toutes les opérations (ingestion, recherche, synthèse, maintenance) utilisent les outils natifs de Claude (WebFetch, Read, Write, Edit, Glob, Grep)
+
+## Responsabilites des skills
+
+| Responsabilite | Skill proprietaire |
+|---|---|
+| Creer des fichiers dans sources/ | kb-ingest |
+| Mettre a jour INDEX.md (ajout d'entree) | kb-ingest |
+| Reconstruire INDEX.md from scratch | kb-manage |
+| Creer/mettre a jour des pages wiki/ | kb-synthesize |
+| Verifier la coherence de l'index | kb-manage |
+| Lire et croiser les sources | kb-search |
 
 ## Exemples de commandes naturelles
 

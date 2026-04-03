@@ -109,3 +109,14 @@ Quand de nouveaux documents sont ajoutés à la base :
 - Relis les nouveaux documents + la synthèse existante
 - Intègre les nouvelles informations sans perdre les analyses précédentes
 - Note la date de mise à jour dans le front matter
+
+## Cycle de vie des pages wiki
+
+Chaque page wiki doit inclure `last_verified: YYYY-MM-DD` dans son front matter, mis à jour à chaque relecture/modification.
+
+**Fraîcheur** :
+- Quand de nouvelles sources sont ajoutées sur un sujet couvert par une page wiki existante, signaler que la synthèse est potentiellement obsolète
+- Les pages wiki dont `last_verified` date de plus de 3 mois sont considérées comme potentiellement obsolètes
+- Lors d'un audit (kb-manage), les pages obsolètes sont signalées avec une recommandation de relecture
+
+**Mise à jour** : relire les sources (y compris les nouvelles), mettre à jour le contenu, bumper `last_verified`

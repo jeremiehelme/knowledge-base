@@ -32,7 +32,7 @@ L'utilisateur peut demander de revoir les tags. Pour chaque document :
 Principes de tagging cohérent :
 - Un même concept = un seul tag (pas `api` ET `apis` ET `API`)
 - Tags en minuscules avec tirets (ex: `machine-learning`, pas `MachineLearning`)
-- 3-7 tags par document est la fourchette idéale
+- 3-5 tags par document est la fourchette idéale
 - Les tags doivent être utiles pour la recherche, pas trop génériques (éviter `tech` ou `article`)
 
 ### Détection de doublons
@@ -78,14 +78,22 @@ Vérifie que :
 
 Signale chaque problème trouvé et propose un fix.
 
+### Gestion à l'échelle
+
+Quand la base grandit, adapte les pratiques :
+- **50+ documents** : les résumés dans INDEX.md doivent rester concis (2 phrases max, pas 3)
+- **100+ documents** : suggérer de découper INDEX.md en sous-index par catégorie (INDEX-web.md, INDEX-articles.md, INDEX-notes.md) avec un INDEX.md maître qui les référence
+- **Archivage** : les documents de plus d'un an jamais référencés dans une page wiki → suggérer un déplacement vers `sources/archive/`
+
 ## Workflow de maintenance recommandé
 
 Quand l'utilisateur dit "fais un check de la base" ou "audite la KB", enchaîne :
 1. Stats de la base
 2. Vérification de cohérence
 3. Détection de doublons
-4. Analyse de gaps
-5. Résumé avec actions recommandées
+4. Vérification de fraîcheur des pages wiki (celles dont `last_verified` date de plus de 3 mois)
+5. Analyse de gaps
+6. Résumé avec actions recommandées
 
 ## Bonnes pratiques
 

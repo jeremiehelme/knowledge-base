@@ -1,102 +1,79 @@
-# 🧠 Knowledge Base — Workshop Brainstorm
+# Knowledge Base — Workshop Brainstorm
 
-Base de connaissances collaborative pour agréger, indexer et exploiter les documents du projet via un agent IA.
+Base de connaissances collaborative pour agreger, indexer et exploiter les documents d'un projet via un agent IA.
 
-Inspiré de [l'approche d'Andrej Karpathy](https://x.com/karpathy/status/2039805659525644595) : pas de RAG complexe, juste des fichiers markdown bien structurés + un index intelligent que le LLM sait naviguer.
+Inspire de [l'approche d'Andrej Karpathy](https://x.com/karpathy/status/2039805659525644595) : pas de RAG complexe, juste des fichiers markdown bien structures + un index intelligent que le LLM sait naviguer.
 
 ## Quick Start
 
-### 1. Installation des dépendances
+### 1. Ouvrir le projet avec Claude Code
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r scripts/requirements.txt
+cd knowledge-base
+claude
 ```
 
-> **Note** : Les scripts détectent automatiquement le `.venv` et se relancent avec le bon Python, même si tu oublies d'activer le venv.
+Aucune installation requise. Toutes les operations utilisent les outils natifs de Claude (WebFetch, Read, Write, Glob, Grep).
 
 ### 2. Ajouter des documents
 
-**Ajouter une page web :**
-```bash
-python scripts/add_url.py https://example.com/article --tags "architecture,api"
+Parle naturellement a Claude :
+
+```
+ajoute https://example.com/article
+ajoute le PDF ~/Documents/rapport.pdf
+note que le client prefere l'option B pour le pricing
 ```
 
-**Ajouter un PDF :**
-```bash
-python scripts/add_pdf.py ~/Documents/rapport.pdf --tags "market,strategy"
+Claude extrait le contenu, le convertit en markdown, genere des tags intelligents, redige un resume, et met a jour l'index automatiquement.
+
+### 3. Interroger la base
+
+```
+que sait-on sur le pricing ?
+compare les options A et B selon nos sources
+prepare un briefing pour le workshop
 ```
 
-**Ajouter une note manuellement :**
-Crée un fichier `.md` dans `sources/notes/` avec ce format :
-```markdown
----
-title: "Titre de la note"
-added_date: 2026-04-03
-type: note
-tags: [tag1, tag2]
----
-
-# Titre de la note
-
-Contenu ici...
-```
-
-### 3. Régénérer l'index
-
-```bash
-python scripts/rebuild_index.py
-```
-
-### 4. Interroger la base avec l'agent IA
-
-Ouvre une session avec Claude (ou un autre LLM) et utilise le prompt système dans `.prompts/system_prompt.md`. Donne-lui l'INDEX.md comme contexte, et pose tes questions !
-
-**Exemples de questions :**
-- "Quels sont les principaux arguments pour et contre une architecture microservices d'après nos sources ?"
-- "Résume les 3 documents les plus pertinents sur le positionnement marché"
-- "Croise les informations de nos sources sur le pricing et propose des options"
+Claude croise les sources, cite ses references, et signale les contradictions.
 
 ## Structure du repo
 
 ```
 knowledge-base/
-├── README.md              ← Ce fichier
-├── INDEX.md               ← Index auto-généré (résumés + tags + liens)
+├── INDEX.md               ← Index maitre (resumes + tags + liens)
 ├── sources/
 │   ├── articles/          ← PDFs convertis en markdown
 │   ├── web/               ← Pages web converties en markdown
-│   └── notes/             ← Notes manuelles, CR de réunions
-├── wiki/                  ← Synthèses thématiques générées par le LLM
-├── scripts/
-│   ├── add_url.py         ← Ajouter une URL
-│   ├── add_pdf.py         ← Ajouter un PDF
-│   └── rebuild_index.py   ← Régénérer l'index
-└── .prompts/
-    └── system_prompt.md   ← Prompt système pour l'agent IA
+│   └── notes/             ← Notes manuelles, CR de reunions
+└── wiki/                  ← Syntheses thematiques generees
 ```
 
-## Workflow recommandé
+## Les 4 operations
 
-1. **Avant le workshop** : Chaque participant ajoute ses documents/URLs pertinents
-2. **Rebuild l'index** : `python scripts/rebuild_index.py`
-3. **Enrichir** : Demander au LLM de compléter les résumés dans INDEX.md
-4. **Générer des wikis** : Demander au LLM de créer des synthèses thématiques dans `wiki/`
-5. **Pendant le workshop** : Utiliser l'agent pour rechercher et croiser les connaissances en temps réel
+| Commande | Ce qui se passe |
+|---|---|
+| `ajoute [url/pdf/note]` | **Ingestion** — extrait, tague, resume, indexe |
+| `que sait-on sur X ?` | **Recherche** — croise les sources, cite tout |
+| `fais une synthese sur X` | **Synthese** — cree une page wiki structuree et sourcee |
+| `audite la base` | **Maintenance** — stats, doublons, coherence, gaps |
+
+## Workflow recommande
+
+1. **Avant le workshop** : chaque participant ajoute ses documents/URLs
+2. **Enrichir** : demander des syntheses thematiques dans `wiki/`
+3. **Pendant le workshop** : utiliser l'agent pour rechercher et croiser les connaissances en temps reel
 
 ## Utilisation avec Claude Code
 
-Si tu utilises Claude Code, tu peux directement pointer vers ce repo et interagir :
-
 ```bash
 cd knowledge-base
-claude "Lis INDEX.md et résume les 5 documents les plus importants pour notre décision d'architecture"
+claude "Lis INDEX.md et resume les 5 documents les plus importants pour notre decision d'architecture"
 ```
 
 ## Contribuer
 
 1. Clone le repo
-2. Ajoute tes documents via les scripts
+2. Ajoute tes documents en parlant a Claude
 3. Commit et push
-4. Les autres membres peuvent pull et interroger la base mise à jour
+4. Les autres membres peuvent pull et interroger la base mise a jour

@@ -79,6 +79,17 @@ publication_date: YYYY-MM-DD (si connue)
 
 **Pour les notes** : demande à l'utilisateur le contenu ou le titre, et crée le fichier directement.
 
+### Gestion des erreurs
+
+| Situation | Action |
+|---|---|
+| WebFetch échoue (timeout, 403, 404) | Informe l'utilisateur, suggère de réessayer plus tard ou de fournir le contenu manuellement comme note |
+| HTML inexploitable (trop de bruit, pas de contenu clair) | Demande à l'utilisateur de coller le texte de l'article directement |
+| PDF illisible (scanné sans OCR, chiffré) | Informe l'utilisateur, suggère un outil OCR ou l'extraction manuelle du texte |
+| Contenu derrière un paywall / login | Informe l'utilisateur, suggère de sauvegarder en PDF d'abord ou de coller le contenu |
+| Extraction trop courte (<50 mots) | Préviens que l'extraction semble incomplète, demande de vérifier |
+| Doublon détecté (même URL dans INDEX.md) | Préviens l'utilisateur, demande s'il faut mettre à jour l'existant ou créer une nouvelle entrée |
+
 ### 4. Tagging intelligent
 
 Quand l'utilisateur ne fournit pas de tags, propose-en 3-5 basés sur le contenu. Les tags doivent être :
@@ -118,6 +129,12 @@ Si l'utilisateur donne plusieurs URLs ou documents d'un coup, traite-les séquen
 ## Bonnes pratiques
 
 - Toujours lire INDEX.md en premier pour connaître les tags existants et maintenir la cohérence
-- Ne pas dupliquer : vérifier si un document avec la même URL ou le même titre existe déjà
+- **Détection de doublons avant ingestion** :
+  1. Chercher `source_url` dans INDEX.md — correspondance exacte = doublon certain
+  2. Comparer le titre slugifié — correspondance = doublon probable
+  3. Si doublon trouvé : montrer l'entrée existante à l'utilisateur et demander :
+     - **Ignorer** (ne pas ajouter)
+     - **Mettre à jour** (remplacer le contenu, garder le même fichier)
+     - **Ajouter quand même** (angle différent sur le même sujet)
 - Pour les contenus très longs (> 10000 mots), ajouter un résumé exécutif au début du fichier markdown en plus du résumé dans l'index
 - Préserver les tableaux, listes et structure du document original autant que possible
