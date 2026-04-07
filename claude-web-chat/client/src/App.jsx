@@ -12,6 +12,11 @@ export default function App() {
     setToken(newToken);
   }
 
+  function handleLogout() {
+    localStorage.removeItem("claude-chat-token");
+    setToken(null);
+  }
+
   if (!token || ws.error === "Invalid token" || (ws.connected && !ws.authenticated)) {
     return (
       <LoginScreen
@@ -38,6 +43,7 @@ export default function App() {
       error={ws.error}
       onSend={ws.sendMessage}
       onNewConversation={ws.newConversation}
+      onLogout={handleLogout}
     />
   );
 }
