@@ -64,13 +64,39 @@ export function generateProfileMarkdown(profile) {
   }
 
   if (goals) {
-    lines.push(`**Goals:** ${goals}`);
+    if (Array.isArray(goals)) {
+      if (goals.length > 0) {
+        lines.push("## Current Goals");
+        for (const goal of goals) {
+          const statusLabel =
+            goal.status === "in_progress" ? "IN PROGRESS" :
+            goal.status === "achieved" ? "ACHIEVED" :
+            "NOT STARTED";
+          let line = `- [${statusLabel}] ${goal.title}`;
+          if (goal.targetDate) line += ` (target: ${goal.targetDate})`;
+          lines.push(line);
+          if (goal.description) lines.push(`  ${goal.description}`);
+        }
+        lines.push("");
+      }
+    } else {
+      lines.push(`**Goals:** ${goals}`);
+    }
   }
   if (challenges) {
-    lines.push(`**Challenges:** ${challenges}`);
-  }
-
-  if (goals || challenges) {
+    if (Array.isArray(challenges)) {
+      if (challenges.length > 0) {
+        lines.push("## Challenges");
+        for (const challenge of challenges) {
+          lines.push(`- ${challenge}`);
+        }
+        lines.push("");
+      }
+    } else {
+      lines.push(`**Challenges:** ${challenges}`);
+      lines.push("");
+    }
+  } else if (goals && !Array.isArray(goals)) {
     lines.push("");
   }
 
