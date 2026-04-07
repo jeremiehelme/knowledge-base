@@ -68,7 +68,7 @@ function SectionHeading({ children }) {
   );
 }
 
-export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateGoal, onDeleteGoal }) {
+export default function ProfileView({ profile, saveProfile, onAddGoal, onDeleteGoal }) {
   const [form, setForm] = useState({
     companyName: "",
     industry: "",
@@ -86,7 +86,6 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [editingGoal, setEditingGoal] = useState(null);
   const [showAddGoal, setShowAddGoal] = useState(false);
 
   useEffect(() => {
@@ -211,26 +210,19 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
           <SectionHeading>Goals & Challenges</SectionHeading>
           <div className="space-y-4">
             <Field label="Goals">
-              <div className="space-y-2">
+              <div className="space-y-1">
                 {form.goals.length === 0 ? (
                   <p className="text-sm text-gray-400">No goals yet.</p>
                 ) : (
-                  form.goals.map((goal) => {
-                    const statusLabel = goal.status === "in_progress" ? "In progress" : goal.status === "achieved" ? "Achieved" : "Not started";
-                    const statusColor = goal.status === "in_progress" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : goal.status === "achieved" ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400";
-                    return (
-                      <div key={goal.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 group">
-                        <p className="text-sm font-medium flex-1">{goal.title}</p>
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor}`}>{statusLabel}</span>
-                        <button type="button" onClick={() => setEditingGoal(goal)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
-                        </button>
-                        <button type="button" onClick={() => { if (onDeleteGoal) onDeleteGoal(goal.id); else set("goals", form.goals.filter((g) => g.id !== goal.id)); }} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500">
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                        </button>
-                      </div>
-                    );
-                  })
+                  form.goals.map((goal) => (
+                    <div key={goal.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                      <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                      <p className="text-sm font-medium flex-1">{goal.title}</p>
+                      <button type="button" onClick={() => { if (onDeleteGoal) onDeleteGoal(goal.id); else set("goals", form.goals.filter((g) => g.id !== goal.id)); }} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                      </button>
+                    </div>
+                  ))
                 )}
                 <button
                   type="button"
@@ -252,29 +244,19 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
           </div>
         </div>
 
-        {(showAddGoal || editingGoal) && (
+        {showAddGoal && (
           <GoalEditModal
-            goal={editingGoal?.id ? editingGoal : null}
             existingGoals={form.goals.map((g) => g.title)}
             onSave={async (data) => {
-              if (editingGoal?.id) {
-                if (onUpdateGoal) {
-                  await onUpdateGoal(editingGoal.id, data);
-                } else {
-                  set("goals", form.goals.map((g) => g.id === editingGoal.id ? { ...g, ...data } : g));
-                }
+              if (onAddGoal) {
+                await onAddGoal(data);
               } else {
-                if (onAddGoal) {
-                  await onAddGoal(data);
-                } else {
-                  const newGoal = { id: "g_" + Date.now(), ...data };
-                  set("goals", [...form.goals, newGoal]);
-                }
+                const newGoal = { id: "g_" + Date.now(), ...data };
+                set("goals", [...form.goals, newGoal]);
               }
-              setEditingGoal(null);
               setShowAddGoal(false);
             }}
-            onClose={() => { setEditingGoal(null); setShowAddGoal(false); }}
+            onClose={() => setShowAddGoal(false)}
           />
         )}
 

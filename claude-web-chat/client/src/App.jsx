@@ -98,7 +98,6 @@ export default function App() {
             profile={profileApi.profile}
             saveProfile={profileApi.saveProfile}
             onAddGoal={profileApi.addGoal}
-            onUpdateGoal={profileApi.updateGoal}
             onDeleteGoal={profileApi.deleteGoal}
           />
         );
