@@ -1,18 +1,4 @@
 import { useState } from "react";
-import CompanySummaryCard from "./CompanySummaryCard.jsx";
-
-const PREDEFINED_GOALS = [
-  "Get more clients",
-  "Grow revenue",
-  "Make smarter decisions",
-  "Launch my product",
-  "Build an online presence",
-  "Automate repetitive tasks",
-  "Find product-market fit",
-  "Create a content strategy",
-  "Improve pricing",
-  "Hire my first employee",
-];
 
 export default function DashboardView({
   profile,
@@ -22,14 +8,13 @@ export default function DashboardView({
   onSelectAgent,
   onNavigate,
   onSendMessage,
-  onAddGoal,
-  onDeleteGoal,
 }) {
   const [promptText, setPromptText] = useState("");
 
   const recentSessions = (sessions || []).slice(0, 5);
   const goals = Array.isArray(profile?.goals) ? profile.goals : [];
-  const activeGoalTitles = goals.map((g) => g.title);
+  const challenges = Array.isArray(profile?.challenges) ? profile.challenges : [];
+  const competitors = Array.isArray(profile?.competitors) ? profile.competitors : [];
 
   function handlePromptSubmit(e) {
     e.preventDefault();
@@ -38,14 +23,12 @@ export default function DashboardView({
     setPromptText("");
   }
 
-  async function toggleGoal(title) {
-    const existing = goals.find((g) => g.title === title);
-    if (existing) {
-      await onDeleteGoal(existing.id);
-    } else {
-      await onAddGoal({ title, description: "", status: "in_progress", targetDate: null });
-    }
-  }
+  const companyItems = [
+    profile?.companyName,
+    profile?.industry,
+    profile?.companyStage,
+    profile?.teamSize ? `Team: ${profile.teamSize}` : null,
+  ].filter(Boolean);
 
   return (
     <div className="flex-1 overflow-y-auto p-6 space-y-6">
@@ -60,27 +43,104 @@ export default function DashboardView({
         </div>
       )}
 
-      <CompanySummaryCard profile={profile} />
-
-      {/* Goals */}
-      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-        <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Your Goals</h2>
-        <div className="flex flex-wrap gap-2">
-          {PREDEFINED_GOALS.map((title) => (
+      {/* Company Overview */}
+      {profile?.companyName && (
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-5">
+          <div className="flex items-center justify-between mb-2">
+            <h1 className="text-xl font-bold">{profile.companyName}</h1>
             <button
-              key={title}
-              onClick={() => toggleGoal(title)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
-                activeGoalTitles.includes(title)
-                  ? "bg-blue-600 border-blue-600 text-white"
-                  : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500"
-              }`}
+              onClick={() => onNavigate("profile")}
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
-              {title}
+              Edit
             </button>
-          ))}
+          </div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            {[profile.industry, profile.companyStage, profile.teamSize ? `Team: ${profile.teamSize}` : null].filter(Boolean).join(" · ")}
+          </p>
+          {profile.businessDescription && (
+            <p className="text-sm text-gray-600 dark:text-gray-300 mt-2">{profile.businessDescription}</p>
+          )}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Goals */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">Goals</h2>
+            <button
+              onClick={() => onNavigate("profile")}
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              Edit
+            </button>
+          </div>
+          {goals.length === 0 ? (
+            <p className="text-sm text-gray-400">No goals set yet.</p>
+          ) : (
+            <div className="space-y-2">
+              {goals.map((goal) => (
+                <div key={goal.id} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
+                  <p className="text-sm">{goal.title}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Challenges */}
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">Challenges</h2>
+            <button
+              onClick={() => onNavigate("profile")}
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              Edit
+            </button>
+          </div>
+          {challenges.length === 0 ? (
+            <p className="text-sm text-gray-400">No challenges set.</p>
+          ) : (
+            <div className="space-y-2">
+              {challenges.map((c, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 flex-shrink-0" />
+                  <p className="text-sm">{c}</p>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Competitors */}
+      {competitors.length > 0 && (
+        <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide">Competitors</h2>
+            <button
+              onClick={() => onNavigate("profile")}
+              className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              Edit
+            </button>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {competitors.map((c, i) => (
+              <div key={i} className="text-sm">
+                {c.url ? (
+                  <a href={c.url} target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">{c.name}</a>
+                ) : (
+                  <span>{c.name}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Ask your Advisor */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">

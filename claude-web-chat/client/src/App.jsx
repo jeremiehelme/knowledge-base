@@ -136,8 +136,6 @@ export default function App() {
             onSelectAgent={setSelectedAgent}
             onNavigate={handleNavigate}
             onSendMessage={handleDashboardSend}
-            onAddGoal={profileApi.addGoal}
-            onDeleteGoal={profileApi.deleteGoal}
           />
         );
     }
