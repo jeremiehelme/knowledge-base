@@ -55,26 +55,6 @@ export default function App() {
     navigate(path);
   }
 
-  if (!token || ws.error === "Invalid token" || (ws.connected && !ws.authenticated)) {
-    return <LoginScreen onLogin={handleLogin} error={ws.error} />;
-  }
-
-  if (!ws.connected) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Connecting...</p>
-      </div>
-    );
-  }
-
-  if (profileApi.profileLoading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-gray-500">Loading...</p>
-      </div>
-    );
-  }
-
   const needsOnboarding = profileApi.profile &&
     !profileApi.profile.onboardingCompleted &&
     !profileApi.profile.onboardingSkipped;
@@ -84,6 +64,18 @@ export default function App() {
       navigate("onboarding");
     }
   }, [needsOnboarding, route.name]);
+
+  if (!token || ws.error === "Invalid token" || (ws.connected && !ws.authenticated)) {
+    return <LoginScreen onLogin={handleLogin} error={ws.error} />;
+  }
+
+  if (!ws.connected || profileApi.profileLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">{!ws.connected ? "Connecting..." : "Loading..."}</p>
+      </div>
+    );
+  }
 
   if (route.name === "onboarding" || needsOnboarding) {
     return (

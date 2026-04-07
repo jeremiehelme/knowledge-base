@@ -23,17 +23,17 @@ export function generateProfileMarkdown(profile) {
   const {
     companyName,
     industry,
-    stage,
+    companyStage: stage,
     teamSize,
-    description,
+    businessDescription: description,
     targetCustomers,
     revenueModel,
     goals,
     challenges,
-    founderRole,
+    yourRole: founderRole,
     competitors,
-    advisorFocus,
-    additionalContext,
+    assistantFocus: advisorFocus,
+    anythingElse: additionalContext,
   } = profile;
 
   const hasIntro = companyName || industry || stage || teamSize;
