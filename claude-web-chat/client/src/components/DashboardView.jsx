@@ -94,9 +94,9 @@ export default function DashboardView({ files, loading, fetchFiles, sessions, on
         </div>
       </div>
 
-      {/* Ask the Assistant prompt */}
+      {/* Ask your Assistant prompt */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-        <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Ask the Assistant</h2>
+        <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Ask your Assistant</h2>
         <form onSubmit={handlePromptSubmit} className="flex gap-2">
           <input
             type="text"
