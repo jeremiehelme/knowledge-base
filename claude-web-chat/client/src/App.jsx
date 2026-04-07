@@ -39,10 +39,13 @@ export default function App() {
       messages={ws.messages}
       streaming={ws.streaming}
       sessionId={ws.sessionId}
+      sessions={ws.sessions}
       userName={ws.userName}
       error={ws.error}
       onSend={ws.sendMessage}
       onNewConversation={ws.newConversation}
+      onSelectSession={ws.resumeConversation}
+      onDeleteSession={ws.deleteConversation}
       onLogout={handleLogout}
     />
   );

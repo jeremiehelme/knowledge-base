@@ -1,5 +1,5 @@
 import { authenticateToken } from "./auth.js";
-import { sendMessage, startNewConversation, isUserBusy } from "./session-manager.js";
+import { sendMessage, startNewConversation, resumeSession, deleteSession, isUserBusy } from "./session-manager.js";
 
 const connections = new Map();
 
@@ -35,6 +35,26 @@ export function handleConnection(ws) {
     if (msg.type === "new_conversation") {
       startNewConversation(user.name);
       ws.send(JSON.stringify({ type: "new_conversation_ok" }));
+      return;
+    }
+
+    if (msg.type === "resume_conversation") {
+      if (!msg.sessionId) {
+        ws.send(JSON.stringify({ type: "error", message: "Missing sessionId" }));
+        return;
+      }
+      resumeSession(user.name, msg.sessionId);
+      ws.send(JSON.stringify({ type: "resume_conversation_ok", sessionId: msg.sessionId }));
+      return;
+    }
+
+    if (msg.type === "delete_conversation") {
+      if (!msg.sessionId) {
+        ws.send(JSON.stringify({ type: "error", message: "Missing sessionId" }));
+        return;
+      }
+      deleteSession(user.name, msg.sessionId);
+      ws.send(JSON.stringify({ type: "delete_conversation_ok", sessionId: msg.sessionId }));
       return;
     }
 

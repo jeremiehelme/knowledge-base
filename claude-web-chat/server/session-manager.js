@@ -143,6 +143,35 @@ export function startNewConversation(userId) {
   sessions.delete(userId);
 }
 
+export function resumeSession(userId, sessionId) {
+  const existing = sessions.get(userId);
+  if (existing) {
+    if (existing.busy && existing.proc) {
+      existing.proc.kill("SIGTERM");
+    }
+    if (existing.idleTimer) clearTimeout(existing.idleTimer);
+  }
+  sessions.set(userId, {
+    proc: null,
+    sessionId,
+    busy: false,
+    lastActivity: Date.now(),
+    idleTimer: null,
+  });
+  resetIdleTimer(userId);
+}
+
+export function deleteSession(userId, sessionId) {
+  const existing = sessions.get(userId);
+  if (existing && existing.sessionId === sessionId) {
+    if (existing.busy && existing.proc) {
+      existing.proc.kill("SIGTERM");
+    }
+    if (existing.idleTimer) clearTimeout(existing.idleTimer);
+    sessions.delete(userId);
+  }
+}
+
 export function isUserBusy(userId) {
   return sessions.get(userId)?.busy || false;
 }

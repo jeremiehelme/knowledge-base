@@ -7,10 +7,13 @@ export default function ChatView({
   messages,
   streaming,
   sessionId,
+  sessions,
   userName,
   error,
   onSend,
   onNewConversation,
+  onSelectSession,
+  onDeleteSession,
   onLogout,
 }) {
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
@@ -24,8 +27,11 @@ export default function ChatView({
   return (
     <div className="flex h-screen w-full">
       <SessionSidebar
+        sessions={sessions}
         currentSessionId={sessionId}
         onNewConversation={onNewConversation}
+        onSelectSession={onSelectSession}
+        onDeleteSession={onDeleteSession}
       />
       <div className="flex flex-col flex-1">
         <header className="flex items-center justify-between px-4 py-3 border-b border-gray-200 dark:border-gray-700">

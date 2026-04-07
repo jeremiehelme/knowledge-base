@@ -1,39 +1,4 @@
-import { useState, useEffect } from "react";
-
-const STORAGE_KEY = "claude-web-chat-sessions";
-
-function loadSessions() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
-
-function saveSessions(sessions) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
-}
-
-export default function SessionSidebar({ currentSessionId, onNewConversation }) {
-  const [sessions, setSessions] = useState(loadSessions);
-
-  useEffect(() => {
-    if (!currentSessionId) return;
-    setSessions((prev) => {
-      const exists = prev.find((s) => s.id === currentSessionId);
-      let updated;
-      if (exists) {
-        updated = prev.map((s) =>
-          s.id === currentSessionId ? { ...s, lastUsed: Date.now() } : s
-        );
-      } else {
-        updated = [{ id: currentSessionId, created: Date.now(), lastUsed: Date.now() }, ...prev];
-      }
-      saveSessions(updated);
-      return updated;
-    });
-  }, [currentSessionId]);
-
+export default function SessionSidebar({ sessions, currentSessionId, onNewConversation, onSelectSession, onDeleteSession }) {
   return (
     <div className="w-64 border-r border-gray-200 dark:border-gray-700 flex flex-col h-full bg-gray-50 dark:bg-gray-900">
       <div className="p-3">
@@ -48,14 +13,28 @@ export default function SessionSidebar({ currentSessionId, onNewConversation }) 
         {sessions.map((session) => (
           <div
             key={session.id}
-            className={`w-full text-left px-3 py-2 text-sm truncate ${
+            className={`group flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
               session.id === currentSessionId
                 ? "bg-gray-200 dark:bg-gray-800 font-medium"
                 : ""
             }`}
+            onClick={() => onSelectSession(session.id)}
           >
-            {new Date(session.created).toLocaleDateString()}{" "}
-            {new Date(session.created).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+            <span className="flex-1 truncate">
+              {session.title || new Date(session.created).toLocaleDateString()}
+            </span>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onDeleteSession(session.id);
+              }}
+              className="opacity-0 group-hover:opacity-100 ml-1 p-1 text-gray-400 hover:text-red-500 dark:hover:text-red-400 transition-opacity"
+              title="Delete chat"
+            >
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
           </div>
         ))}
       </div>
