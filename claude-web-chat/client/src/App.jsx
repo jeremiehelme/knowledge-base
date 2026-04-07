@@ -18,6 +18,7 @@ export default function App() {
   const filesApi = useFiles(token);
   const profileApi = useProfile(token);
 
+  const [selectedAgent, setSelectedAgent] = useState("advisor");
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
 
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function App() {
   useEffect(() => {
     if (ws.authenticated) {
       profileApi.fetchProfile();
+      profileApi.fetchAgents();
     }
   }, [ws.authenticated]);
 
@@ -41,10 +43,11 @@ export default function App() {
     setToken(null);
   }
 
-  function handleDashboardSend(text) {
+  function handleDashboardSend(text, agentId) {
+    if (agentId) setSelectedAgent(agentId);
     ws.newConversation();
     navigate("chat");
-    setTimeout(() => ws.sendMessage(text), 100);
+    setTimeout(() => ws.sendMessage(text, agentId || selectedAgent), 100);
   }
 
   function handleNavigate(path) {
@@ -94,6 +97,9 @@ export default function App() {
           <ProfileView
             profile={profileApi.profile}
             saveProfile={profileApi.saveProfile}
+            onAddGoal={profileApi.addGoal}
+            onUpdateGoal={profileApi.updateGoal}
+            onDeleteGoal={profileApi.deleteGoal}
           />
         );
       case "files":
@@ -118,18 +124,24 @@ export default function App() {
             onNewConversation={ws.newConversation}
             onSelectSession={(id) => handleNavigate(`chat/${id}`)}
             onDeleteSession={ws.deleteConversation}
+            agents={profileApi.agents}
+            selectedAgent={selectedAgent}
+            onSelectAgent={setSelectedAgent}
           />
         );
       default:
         return (
           <DashboardView
-            files={filesApi.files}
-            loading={filesApi.loading}
-            fetchFiles={filesApi.fetchFiles}
+            profile={profileApi.profile}
             sessions={ws.sessions}
+            agents={profileApi.agents}
+            selectedAgent={selectedAgent}
+            onSelectAgent={setSelectedAgent}
             onNavigate={handleNavigate}
             onSendMessage={handleDashboardSend}
-            profile={profileApi.profile}
+            onAddGoal={profileApi.addGoal}
+            onUpdateGoal={profileApi.updateGoal}
+            onDeleteGoal={profileApi.deleteGoal}
           />
         );
     }
