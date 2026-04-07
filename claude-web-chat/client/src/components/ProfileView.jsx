@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import GoalEditModal from "./GoalEditModal.jsx";
 
 const COMPANY_STAGES = ["Idea", "Pre-revenue", "Early traction", "Growth", "Established"];
 const TEAM_SIZES = ["Solo", "2-5", "6-20", "21-50", "50+"];
@@ -66,7 +67,7 @@ function SectionHeading({ children }) {
   );
 }
 
-export default function ProfileView({ profile, saveProfile }) {
+export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateGoal, onDeleteGoal }) {
   const [form, setForm] = useState({
     companyName: "",
     industry: "",
@@ -75,8 +76,8 @@ export default function ProfileView({ profile, saveProfile }) {
     businessDescription: "",
     targetCustomers: "",
     revenueModel: [],
-    goals: "",
-    challenges: "",
+    goals: [],
+    challenges: [],
     yourRole: "",
     competitors: "",
     assistantFocus: [],
@@ -84,6 +85,9 @@ export default function ProfileView({ profile, saveProfile }) {
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [editingGoal, setEditingGoal] = useState(null);
+  const [showAddGoal, setShowAddGoal] = useState(false);
+  const [newChallenge, setNewChallenge] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -95,8 +99,8 @@ export default function ProfileView({ profile, saveProfile }) {
         businessDescription: profile.businessDescription || "",
         targetCustomers: profile.targetCustomers || "",
         revenueModel: profile.revenueModel || [],
-        goals: profile.goals || "",
-        challenges: profile.challenges || "",
+        goals: Array.isArray(profile.goals) ? profile.goals : [],
+        challenges: Array.isArray(profile.challenges) ? profile.challenges : [],
         yourRole: profile.yourRole || "",
         competitors: profile.competitors || "",
         assistantFocus: profile.assistantFocus || [],
@@ -206,26 +210,99 @@ export default function ProfileView({ profile, saveProfile }) {
         <div>
           <SectionHeading>Goals & Challenges</SectionHeading>
           <div className="space-y-4">
-            <Field label="Current goals">
-              <textarea
-                rows={3}
-                value={form.goals}
-                onChange={(e) => set("goals", e.target.value)}
-                placeholder="What are you trying to achieve in the next 6-12 months?"
-                className={inputClass}
-              />
+            <Field label="Goals">
+              <div className="space-y-2">
+                {form.goals.length === 0 ? (
+                  <p className="text-sm text-gray-400">No goals yet.</p>
+                ) : (
+                  form.goals.map((goal) => {
+                    const statusLabel = goal.status === "in_progress" ? "In progress" : goal.status === "achieved" ? "Achieved" : "Not started";
+                    const statusColor = goal.status === "in_progress" ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400" : goal.status === "achieved" ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" : "bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400";
+                    return (
+                      <div key={goal.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 group">
+                        <p className="text-sm font-medium flex-1">{goal.title}</p>
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${statusColor}`}>{statusLabel}</span>
+                        <button type="button" onClick={() => setEditingGoal(goal)} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" /></svg>
+                        </button>
+                        <button type="button" onClick={() => { if (onDeleteGoal) onDeleteGoal(goal.id); else set("goals", form.goals.filter((g) => g.id !== goal.id)); }} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500">
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+                      </div>
+                    );
+                  })
+                )}
+                <button
+                  type="button"
+                  onClick={() => setShowAddGoal(true)}
+                  className="text-xs font-medium text-blue-500 hover:text-blue-600"
+                >
+                  + Add goal
+                </button>
+              </div>
             </Field>
             <Field label="Challenges">
-              <textarea
-                rows={3}
-                value={form.challenges}
-                onChange={(e) => set("challenges", e.target.value)}
-                placeholder="What obstacles are you facing?"
-                className={inputClass}
-              />
+              <div className="flex flex-wrap gap-2 mb-2">
+                {form.challenges.map((c, i) => (
+                  <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm">
+                    {c}
+                    <button type="button" onClick={() => set("challenges", form.challenges.filter((_, idx) => idx !== i))} className="hover:text-orange-900 dark:hover:text-orange-100">
+                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
+                  </span>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newChallenge}
+                  onChange={(e) => setNewChallenge(e.target.value)}
+                  placeholder="Add a challenge..."
+                  className={inputClass}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const val = newChallenge.trim();
+                      if (val) { set("challenges", [...form.challenges, val]); setNewChallenge(""); }
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => { const val = newChallenge.trim(); if (val) { set("challenges", [...form.challenges, val]); setNewChallenge(""); } }}
+                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex-shrink-0"
+                >
+                  Add
+                </button>
+              </div>
             </Field>
           </div>
         </div>
+
+        {(showAddGoal || editingGoal) && (
+          <GoalEditModal
+            goal={editingGoal?.id ? editingGoal : null}
+            onSave={async (data) => {
+              if (editingGoal?.id) {
+                if (onUpdateGoal) {
+                  await onUpdateGoal(editingGoal.id, data);
+                } else {
+                  set("goals", form.goals.map((g) => g.id === editingGoal.id ? { ...g, ...data } : g));
+                }
+              } else {
+                if (onAddGoal) {
+                  await onAddGoal(data);
+                } else {
+                  const newGoal = { id: "g_" + Date.now(), ...data };
+                  set("goals", [...form.goals, newGoal]);
+                }
+              }
+              setEditingGoal(null);
+              setShowAddGoal(false);
+            }}
+            onClose={() => { setEditingGoal(null); setShowAddGoal(false); }}
+          />
+        )}
 
         {/* Section 4 */}
         <div>
