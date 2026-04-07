@@ -3,3 +3,5 @@ client/dist/
 .env
 config.json
 workspaces/
+.claude/
+docs/
