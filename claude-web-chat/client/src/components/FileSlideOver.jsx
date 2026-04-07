@@ -7,11 +7,24 @@ export default function FileSlideOver({ file, fetchContent, onClose }) {
 
   useEffect(() => {
     setLoading(true);
-    fetchContent(file.path).then((data) => {
-      setContent(data);
-      setLoading(false);
-    });
+    fetchContent(file.path)
+      .then((data) => {
+        setContent(data);
+        setLoading(false);
+      })
+      .catch(() => {
+        setContent(null);
+        setLoading(false);
+      });
   }, [file.path]);
+
+  useEffect(() => {
+    function handleKeyDown(e) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
 
   return (
     <div className="fixed inset-0 z-40 flex justify-end">

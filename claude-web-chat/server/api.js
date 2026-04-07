@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { join, dirname } from "path";
+import { join, dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { unlinkSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { requireAuth } from "./middleware.js";
@@ -40,11 +40,14 @@ router.get("/files/*", (req, res) => {
 router.delete("/files/*", (req, res) => {
   const filePath = req.params[0];
   if (!filePath) return res.status(400).json({ error: "Missing path" });
+  if (!filePath.endsWith(".md") || filePath.endsWith("INDEX.md")) {
+    return res.status(400).json({ error: "Cannot delete this file" });
+  }
 
   const dir = userKnowledgeDir(req.user.name);
-  const fullPath = join(dir, filePath);
+  const fullPath = resolve(dir, filePath);
 
-  if (!fullPath.startsWith(dir)) return res.status(403).json({ error: "Forbidden" });
+  if (!fullPath.startsWith(resolve(dir) + "/")) return res.status(403).json({ error: "Forbidden" });
   if (!existsSync(fullPath)) return res.status(404).json({ error: "File not found" });
 
   unlinkSync(fullPath);

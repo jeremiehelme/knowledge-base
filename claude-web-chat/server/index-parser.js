@@ -1,5 +1,5 @@
 import { readFileSync, readdirSync, statSync, existsSync } from "fs";
-import { join, relative } from "path";
+import { join, relative, resolve } from "path";
 
 function parseYamlFrontMatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
@@ -65,9 +65,9 @@ export function listFiles(knowledgeDir) {
 }
 
 export function readFileContent(knowledgeDir, filePath) {
-  const fullPath = join(knowledgeDir, filePath);
+  const fullPath = resolve(knowledgeDir, filePath);
+  if (!fullPath.startsWith(resolve(knowledgeDir) + "/")) return null;
   if (!existsSync(fullPath)) return null;
-  if (!fullPath.startsWith(knowledgeDir)) return null;
   const content = readFileSync(fullPath, "utf-8");
   const { frontMatter, body } = parseYamlFrontMatter(content);
   return {

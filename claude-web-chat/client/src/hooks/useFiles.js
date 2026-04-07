@@ -17,13 +17,15 @@ export default function useFiles(token) {
   }, [token]);
 
   const fetchFileContent = useCallback(async (filePath) => {
-    const res = await fetch(`/api/files/${encodeURIComponent(filePath)}/content`, { headers });
+    const encoded = filePath.split("/").map(encodeURIComponent).join("/");
+    const res = await fetch(`/api/files/${encoded}/content`, { headers });
     if (!res.ok) return null;
     return res.json();
   }, [token]);
 
   const deleteFile = useCallback(async (filePath) => {
-    const res = await fetch(`/api/files/${encodeURIComponent(filePath)}`, {
+    const encoded = filePath.split("/").map(encodeURIComponent).join("/");
+    const res = await fetch(`/api/files/${encoded}`, {
       method: "DELETE",
       headers,
     });
