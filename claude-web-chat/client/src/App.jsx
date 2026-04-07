@@ -2,17 +2,21 @@ import { useState, useEffect } from "react";
 import useWebSocket from "./hooks/useWebSocket.js";
 import useRouter from "./hooks/useRouter.js";
 import useFiles from "./hooks/useFiles.js";
+import useProfile from "./hooks/useProfile.js";
 import LoginScreen from "./components/LoginScreen.jsx";
 import AppShell from "./components/AppShell.jsx";
 import DashboardView from "./components/DashboardView.jsx";
 import FilesView from "./components/FilesView.jsx";
 import ChatView from "./components/ChatView.jsx";
+import OnboardingWizard from "./components/OnboardingWizard.jsx";
+import ProfileView from "./components/ProfileView.jsx";
 
 export default function App() {
   const [token, setToken] = useState(localStorage.getItem("claude-chat-token"));
   const ws = useWebSocket(token);
   const { route, navigate } = useRouter();
   const filesApi = useFiles(token);
+  const profileApi = useProfile(token);
 
   const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
 
@@ -20,6 +24,12 @@ export default function App() {
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("theme", dark ? "dark" : "light");
   }, [dark]);
+
+  useEffect(() => {
+    if (ws.authenticated) {
+      profileApi.fetchProfile();
+    }
+  }, [ws.authenticated]);
 
   function handleLogin(newToken) {
     localStorage.setItem("claude-chat-token", newToken);
@@ -57,8 +67,42 @@ export default function App() {
     );
   }
 
+  if (profileApi.profileLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
+
+  if (
+    profileApi.profile &&
+    !profileApi.profile.onboardingCompleted &&
+    !profileApi.profile.onboardingSkipped &&
+    route.name !== "onboarding"
+  ) {
+    navigate("onboarding");
+  }
+
+  if (route.name === "onboarding") {
+    return (
+      <OnboardingWizard
+        saveProfile={profileApi.saveProfile}
+        onComplete={() => { profileApi.fetchProfile(); navigate("dashboard"); }}
+        onSkip={() => { profileApi.fetchProfile(); navigate("dashboard"); }}
+      />
+    );
+  }
+
   function renderView() {
     switch (route.name) {
+      case "profile":
+        return (
+          <ProfileView
+            profile={profileApi.profile}
+            saveProfile={profileApi.saveProfile}
+          />
+        );
       case "files":
         return (
           <FilesView
@@ -92,6 +136,7 @@ export default function App() {
             sessions={ws.sessions}
             onNavigate={handleNavigate}
             onSendMessage={handleDashboardSend}
+            profile={profileApi.profile}
           />
         );
     }

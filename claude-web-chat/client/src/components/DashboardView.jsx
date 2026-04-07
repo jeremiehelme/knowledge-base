@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function DashboardView({ files, loading, fetchFiles, sessions, onNavigate, onSendMessage }) {
+export default function DashboardView({ files, loading, fetchFiles, sessions, onNavigate, onSendMessage, profile }) {
   const [promptText, setPromptText] = useState("");
 
   useEffect(() => {
@@ -28,6 +28,20 @@ export default function DashboardView({ files, loading, fetchFiles, sessions, on
   return (
     <div className="flex-1 overflow-y-auto p-6">
       <h1 className="text-lg font-semibold mb-6">Dashboard</h1>
+
+      {(!profile || !profile.onboardingCompleted) && (
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg flex items-center justify-between">
+          <p className="text-sm text-blue-700 dark:text-blue-300">
+            Complete your business profile to get better advice from your Assistant.
+          </p>
+          <button
+            onClick={() => onNavigate("onboarding")}
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline ml-4 flex-shrink-0"
+          >
+            Complete profile
+          </button>
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         {/* Recent Files */}
