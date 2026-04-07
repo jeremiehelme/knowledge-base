@@ -75,16 +75,17 @@ export default function App() {
     );
   }
 
-  if (
-    profileApi.profile &&
+  const needsOnboarding = profileApi.profile &&
     !profileApi.profile.onboardingCompleted &&
-    !profileApi.profile.onboardingSkipped &&
-    route.name !== "onboarding"
-  ) {
-    navigate("onboarding");
-  }
+    !profileApi.profile.onboardingSkipped;
 
-  if (route.name === "onboarding") {
+  useEffect(() => {
+    if (needsOnboarding && route.name !== "onboarding") {
+      navigate("onboarding");
+    }
+  }, [needsOnboarding, route.name]);
+
+  if (route.name === "onboarding" || needsOnboarding) {
     return (
       <OnboardingWizard
         saveProfile={profileApi.saveProfile}

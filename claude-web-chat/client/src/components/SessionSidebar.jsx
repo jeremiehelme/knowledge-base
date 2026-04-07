@@ -10,7 +10,7 @@ export default function SessionSidebar({ sessions, currentSessionId, onNewConver
         </button>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {sessions.map((session) => (
+        {(sessions || []).map((session) => (
           <div
             key={session.id}
             className={`group flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 ${
