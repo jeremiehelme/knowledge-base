@@ -4,6 +4,7 @@ import { fileURLToPath } from "url";
 import { unlinkSync, readFileSync, writeFileSync, existsSync } from "fs";
 import { requireAuth } from "./middleware.js";
 import { listFiles, readFileContent } from "./index-parser.js";
+import { ensureUserWorkspace, injectProfileIntoClaude } from "./profile-utils.js";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const workspacesDir = join(__dirname, "..", "workspaces");
@@ -60,6 +61,25 @@ router.delete("/files/*", (req, res) => {
     writeFileSync(indexPath, filtered.join("\n"));
   }
 
+  res.json({ ok: true });
+});
+
+router.get("/profile", (req, res) => {
+  const dir = ensureUserWorkspace(req.user.name);
+  const profilePath = join(dir, "profile.json");
+  if (!existsSync(profilePath)) {
+    return res.json({ onboardingCompleted: false });
+  }
+  const data = JSON.parse(readFileSync(profilePath, "utf-8"));
+  res.json(data);
+});
+
+router.put("/profile", (req, res) => {
+  const dir = ensureUserWorkspace(req.user.name);
+  const profilePath = join(dir, "profile.json");
+  const profile = req.body;
+  writeFileSync(profilePath, JSON.stringify(profile, null, 2));
+  injectProfileIntoClaude(dir, profile);
   res.json({ ok: true });
 });
 
