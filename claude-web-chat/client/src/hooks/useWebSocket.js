@@ -205,7 +205,7 @@ export default function useWebSocket(token) {
     return () => ws.close();
   }, [token]);
 
-  const sendMessage = useCallback((text) => {
+  const sendMessage = useCallback((text, agentId) => {
     if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) return;
     setMessages((prev) => [
       ...prev,
@@ -215,7 +215,7 @@ export default function useWebSocket(token) {
     streamBufferRef.current = "";
     setStreaming(true);
     setError(null);
-    wsRef.current.send(JSON.stringify({ type: "message", text }));
+    wsRef.current.send(JSON.stringify({ type: "message", text, ...(agentId && { agentId }) }));
   }, []);
 
   const newConversation = useCallback(() => {
