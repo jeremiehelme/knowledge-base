@@ -35,7 +35,7 @@ export default function MessageInput({ onSend, disabled }) {
           value={text}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
-          placeholder="Message Claude..."
+          placeholder="Message your Assistant..."
           disabled={disabled}
           rows={1}
           className="flex-1 resize-none px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"

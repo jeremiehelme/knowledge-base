@@ -34,7 +34,7 @@ export default function MessageList({ messages }) {
     <div ref={containerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
       {messages.length === 0 && (
         <div className="flex items-center justify-center h-full text-gray-400">
-          Send a message to start chatting with Claude
+          Send a message to start chatting with your Assistant
         </div>
       )}
       {messages.map((msg, i) => (

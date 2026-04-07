@@ -16,7 +16,7 @@ export default function LoginScreen({ onLogin, error }) {
         onSubmit={handleSubmit}
         className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 w-full max-w-sm"
       >
-        <h1 className="text-2xl font-bold mb-6 text-center">Claude Web Chat</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center">Assistant</h1>
         <label className="block text-sm font-medium mb-2" htmlFor="token">
           Access Token
         </label>
