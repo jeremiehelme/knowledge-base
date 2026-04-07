@@ -1,0 +1,8 @@
+{
+  "users": [
+    { "name": "Alice", "token": "change-me-alice-token" },
+    { "name": "Bob", "token": "change-me-bob-token" }
+  ],
+  "idleTimeoutMinutes": 10,
+  "port": 3000
+}

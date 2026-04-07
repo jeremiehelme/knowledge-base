@@ -12,7 +12,7 @@ export default function App() {
     setToken(newToken);
   }
 
-  if (!token || (ws.connected && !ws.authenticated)) {
+  if (!token || ws.error === "Invalid token" || (ws.connected && !ws.authenticated)) {
     return (
       <LoginScreen
         onLogin={handleLogin}

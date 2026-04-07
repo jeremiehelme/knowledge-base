@@ -20,18 +20,20 @@ export function sendMessage(userId, text, { onChunk, onDone, onError }) {
     "--output-format", "stream-json",
     "--verbose",
     "--bare",
-    "-p", text,
   ];
 
   if (existing?.sessionId) {
     args.push("--resume", existing.sessionId);
   }
 
+  args.push("-p", text);
+
   const proc = spawn("claude", args, {
-    stdio: ["pipe", "pipe", "pipe"],
+    stdio: ["pipe", "pipe", "ignore"],
   });
 
   const entry = {
+    proc,
     sessionId: existing?.sessionId || null,
     busy: true,
     lastActivity: Date.now(),
@@ -57,19 +59,12 @@ export function sendMessage(userId, text, { onChunk, onDone, onError }) {
     }
   });
 
-  proc.stderr.on("data", (data) => {
-    // stderr may contain warnings, ignore unless critical
-  });
-
-  proc.on("close", (code) => {
+  proc.on("close", () => {
     const session = sessions.get(userId);
     if (session) {
       session.busy = false;
       session.lastActivity = Date.now();
       resetIdleTimer(userId);
-    }
-    if (code !== 0 && code !== null) {
-      onError(`Claude process exited with code ${code}`);
     }
   });
 
@@ -111,7 +106,7 @@ function resetIdleTimer(userId) {
 
   if (session.idleTimer) clearTimeout(session.idleTimer);
 
-  const { idleTimeoutMinutes } = getConfig();
+  const { idleTimeoutMinutes = 10 } = getConfig();
   session.idleTimer = setTimeout(() => {
     sessions.delete(userId);
   }, idleTimeoutMinutes * 60 * 1000);
@@ -119,7 +114,12 @@ function resetIdleTimer(userId) {
 
 export function startNewConversation(userId) {
   const existing = sessions.get(userId);
-  if (existing?.idleTimer) clearTimeout(existing.idleTimer);
+  if (existing) {
+    if (existing.idleTimer) clearTimeout(existing.idleTimer);
+    if (existing.proc && existing.busy) {
+      existing.proc.kill("SIGTERM");
+    }
+  }
   sessions.delete(userId);
 }
 

@@ -25,7 +25,12 @@ export default function useWebSocket(token) {
     };
 
     ws.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
+      let msg;
+      try {
+        msg = JSON.parse(event.data);
+      } catch {
+        return;
+      }
 
       if (msg.type === "auth_ok") {
         setAuthenticated(true);
@@ -81,6 +86,7 @@ export default function useWebSocket(token) {
     ws.onclose = () => {
       setConnected(false);
       setAuthenticated(false);
+      setStreaming(false);
     };
 
     return () => ws.close();
