@@ -1,5 +1,6 @@
 import { authenticateToken } from "./auth.js";
 import { sendMessage, startNewConversation, resumeSession, deleteSession, isUserBusy } from "./session-manager.js";
+import { AGENTS } from "./agents.js";
 
 const connections = new Map();
 
@@ -69,7 +70,15 @@ export function handleConnection(ws) {
         return;
       }
 
-      sendMessage(user.name, msg.text, {
+      let text = msg.text;
+      if (msg.agentId && msg.agentId !== "advisor") {
+        const agent = AGENTS.find(a => a.id === msg.agentId);
+        if (agent) {
+          text = `[System context: ${agent.systemPrompt}]\n\n${text}`;
+        }
+      }
+
+      sendMessage(user.name, text, {
         onChunk: (text) => {
           if (ws.readyState === ws.OPEN) {
             ws.send(JSON.stringify({ type: "chunk", text }));
