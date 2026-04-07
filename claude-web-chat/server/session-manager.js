@@ -1,7 +1,25 @@
 import { spawn } from "child_process";
+import { existsSync, mkdirSync, cpSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 import { getConfig } from "./auth.js";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const workspacesDir = join(__dirname, "..", "workspaces");
+const templateDir = join(__dirname, "..", "template");
+
 const sessions = new Map();
+
+function ensureUserWorkspace(userId) {
+  const userDir = join(workspacesDir, userId);
+  if (!existsSync(userDir)) {
+    mkdirSync(userDir, { recursive: true });
+    if (existsSync(templateDir)) {
+      cpSync(templateDir, userDir, { recursive: true });
+    }
+  }
+  return userDir;
+}
 
 export function getSession(userId) {
   return sessions.get(userId) || null;
@@ -19,7 +37,6 @@ export function sendMessage(userId, text, { onChunk, onDone, onError }) {
     "--print",
     "--output-format", "stream-json",
     "--verbose",
-    "--bare",
   ];
 
   if (existing?.sessionId) {
@@ -28,7 +45,10 @@ export function sendMessage(userId, text, { onChunk, onDone, onError }) {
 
   args.push("-p", text);
 
+  const userDir = ensureUserWorkspace(userId);
+
   const proc = spawn("claude", args, {
+    cwd: userDir,
     stdio: ["pipe", "pipe", "ignore"],
   });
 

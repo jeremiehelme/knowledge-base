@@ -12,8 +12,8 @@
 ## Notes for the AI Agent
 
 When searching this base:
-1. Read this INDEX.md first to identify relevant documents
-2. Then consult specific documents via their relative path
+1. Read knowledge/INDEX.md first to identify relevant documents
+2. Then consult specific documents via their path (e.g. knowledge/sources/web/file.md)
 3. Cross-reference information from multiple sources when relevant
 4. Always cite your sources with the title and document path
 

@@ -5,17 +5,18 @@ You work in a project knowledge base structured as markdown files, inspired by A
 ## Project structure
 
 ```
-INDEX.md              ← Master index: summaries, tags, and links for each document
-sources/
-├── articles/         ← PDFs converted to markdown
-├── web/              ← Web pages converted to markdown
-└── notes/            ← Manual notes, meeting minutes
-wiki/                 ← Generated thematic syntheses
+knowledge/
+├── INDEX.md              ← Master index: summaries, tags, and links for each document
+├── sources/
+│   ├── articles/         ← PDFs converted to markdown
+│   ├── web/              ← Web pages converted to markdown
+│   └── notes/            ← Manual notes, meeting minutes
+└── wiki/                 ← Generated thematic syntheses
 ```
 
 ## Core principle
 
-**INDEX.md is the entry point for everything.** Read it first for every task. It contains summaries and tags for all documents — it's your map of the territory.
+**knowledge/INDEX.md is the entry point for everything.** Read it first for every task. It contains summaries and tags for all documents — it's your map of the territory.
 
 ## How to interpret user requests
 
@@ -28,7 +29,7 @@ When the user says things like:
 
 → Read the skill `.claude/skills/kb-ingest/SKILL.md` and follow its instructions.
 
-In short: convert the content to markdown, save in the right subfolder of `sources/`, tag intelligently (consistent with existing tags in INDEX.md), write a summary, and update INDEX.md.
+In short: convert the content to markdown, save in the right subfolder of `knowledge/sources/`, tag intelligently (consistent with existing tags in knowledge/INDEX.md), write a summary, and update knowledge/INDEX.md.
 
 ### Search and questions
 
@@ -39,7 +40,7 @@ When the user says things like:
 
 → Read the skill `.claude/skills/kb-search/SKILL.md` and follow its instructions.
 
-In short: read INDEX.md, identify relevant documents, read them in depth, cross-reference sources, and always cite where the info comes from.
+In short: read knowledge/INDEX.md, identify relevant documents, read them in depth, cross-reference sources, and always cite where the info comes from.
 
 ### Syntheses and analyses
 
@@ -50,7 +51,7 @@ When the user says things like:
 
 → Read the skill `.claude/skills/kb-synthesize/SKILL.md` and follow its instructions.
 
-In short: produce a structured, sourced document in `wiki/`, update INDEX.md.
+In short: produce a structured, sourced document in `knowledge/wiki/`, update knowledge/INDEX.md.
 
 ### Base maintenance
 
@@ -63,9 +64,9 @@ When the user says things like:
 
 ## General rules
 
-- **Always cite sources** using the format: **[Title]** (`sources/category/file.md`)
+- **Always cite sources** using the format: **[Title]** (`knowledge/sources/category/file.md`)
 - **Never invent** information that is not in the documents
-- **Tag consistency**: before tagging, read INDEX.md to see existing tags and reuse them
+- **Tag consistency**: before tagging, read knowledge/INDEX.md to see existing tags and reuse them
 - **Markdown front matter**: every source file has a YAML front matter (title, date, type, tags)
 - **No external dependencies**: all operations (ingestion, search, synthesis, maintenance) use Claude's native tools (WebFetch, Read, Write, Edit, Glob, Grep)
 
@@ -73,10 +74,10 @@ When the user says things like:
 
 | Responsibility | Owner skill |
 |---|---|
-| Create files in sources/ | kb-ingest |
-| Update INDEX.md (add entry) | kb-ingest |
-| Rebuild INDEX.md from scratch | kb-manage |
-| Create/update wiki/ pages | kb-synthesize |
+| Create files in knowledge/sources/ | kb-ingest |
+| Update knowledge/INDEX.md (add entry) | kb-ingest |
+| Rebuild knowledge/INDEX.md from scratch | kb-manage |
+| Create/update knowledge/wiki/ pages | kb-synthesize |
 | Verify index consistency | kb-manage |
 | Read and cross-reference sources | kb-search |
 
