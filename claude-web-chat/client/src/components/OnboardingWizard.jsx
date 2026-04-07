@@ -1,4 +1,5 @@
 import { useState } from "react";
+import CompetitorList from "./CompetitorList.jsx";
 
 const STEPS = [
   {
@@ -93,7 +94,7 @@ export default function OnboardingWizard({ onComplete, onSkip, saveProfile }) {
     goals: [],
     challenges: [],
     yourRole: "",
-    competitors: "",
+    competitors: [],
     assistantFocus: [],
     anythingElse: "",
   });
@@ -311,12 +312,9 @@ export default function OnboardingWizard({ onComplete, onSkip, saveProfile }) {
                   />
                 </Field>
                 <Field label="Competitors">
-                  <input
-                    type="text"
-                    value={form.competitors}
-                    onChange={(e) => set("competitors", e.target.value)}
-                    placeholder="Who are your main competitors?"
-                    className={inputClass}
+                  <CompetitorList
+                    competitors={form.competitors}
+                    onChange={(v) => set("competitors", v)}
                   />
                 </Field>
                 <Field label="Assistant focus">

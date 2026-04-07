@@ -104,7 +104,15 @@ export function generateProfileMarkdown(profile) {
     lines.push(`**Role:** ${founderRole}`);
   }
   if (competitors) {
-    lines.push(`**Competitors:** ${competitors}`);
+    if (Array.isArray(competitors) && competitors.length > 0) {
+      lines.push("**Competitors:**");
+      for (const c of competitors) {
+        const entry = c.url ? `- ${c.name} (${c.url})` : `- ${c.name}`;
+        lines.push(entry);
+      }
+    } else if (typeof competitors === "string" && competitors) {
+      lines.push(`**Competitors:** ${competitors}`);
+    }
   }
   if (advisorFocus && (Array.isArray(advisorFocus) ? advisorFocus.length > 0 : advisorFocus)) {
     const value = Array.isArray(advisorFocus) ? advisorFocus.join(", ") : advisorFocus;

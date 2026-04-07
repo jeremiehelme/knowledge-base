@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import CompetitorList from "./CompetitorList.jsx";
 
 const PREDEFINED_GOALS = ["Get more clients", "Grow revenue", "Make smarter decisions", "Launch my product", "Build an online presence", "Automate repetitive tasks", "Find product-market fit", "Create a content strategy", "Improve pricing", "Hire my first employee"];
 const COMPANY_STAGES = ["Idea", "Pre-revenue", "Early traction", "Growth", "Established"];
@@ -80,7 +81,7 @@ export default function ProfileView({ profile, saveProfile }) {
     goals: [],
     challenges: [],
     yourRole: "",
-    competitors: "",
+    competitors: [],
     assistantFocus: [],
     anythingElse: "",
   });
@@ -100,7 +101,7 @@ export default function ProfileView({ profile, saveProfile }) {
         goals: Array.isArray(profile.goals) ? profile.goals : [],
         challenges: Array.isArray(profile.challenges) ? profile.challenges : [],
         yourRole: profile.yourRole || "",
-        competitors: profile.competitors || "",
+        competitors: Array.isArray(profile.competitors) ? profile.competitors : [],
         assistantFocus: profile.assistantFocus || [],
         anythingElse: profile.anythingElse || "",
       });
@@ -247,12 +248,9 @@ export default function ProfileView({ profile, saveProfile }) {
               />
             </Field>
             <Field label="Competitors">
-              <input
-                type="text"
-                value={form.competitors}
-                onChange={(e) => set("competitors", e.target.value)}
-                placeholder="Who are your main competitors?"
-                className={inputClass}
+              <CompetitorList
+                competitors={form.competitors}
+                onChange={(v) => set("competitors", v)}
               />
             </Field>
             <Field label="Assistant focus">
