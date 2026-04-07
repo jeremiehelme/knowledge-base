@@ -4,6 +4,7 @@ import GoalEditModal from "./GoalEditModal.jsx";
 const COMPANY_STAGES = ["Idea", "Pre-revenue", "Early traction", "Growth", "Established"];
 const TEAM_SIZES = ["Solo", "2-5", "6-20", "21-50", "50+"];
 const REVENUE_MODELS = ["Subscription", "One-time", "Marketplace", "Services", "Ads", "Not yet"];
+const COMMON_CHALLENGES = ["Not enough clients", "Limited budget", "Wearing too many hats", "Time management", "Standing out from competition", "Pricing my services right", "Staying consistent with marketing", "Managing cash flow"];
 const ASSISTANT_FOCUS = ["Strategy", "Marketing", "Sales", "Product", "Fundraising", "Operations", "Hiring", "Finance"];
 
 const inputClass =
@@ -87,7 +88,6 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
   const [saved, setSaved] = useState(false);
   const [editingGoal, setEditingGoal] = useState(null);
   const [showAddGoal, setShowAddGoal] = useState(false);
-  const [newChallenge, setNewChallenge] = useState("");
 
   useEffect(() => {
     if (profile) {
@@ -242,39 +242,12 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
               </div>
             </Field>
             <Field label="Challenges">
-              <div className="flex flex-wrap gap-2 mb-2">
-                {form.challenges.map((c, i) => (
-                  <span key={i} className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm">
-                    {c}
-                    <button type="button" onClick={() => set("challenges", form.challenges.filter((_, idx) => idx !== i))} className="hover:text-orange-900 dark:hover:text-orange-100">
-                      <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                  </span>
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={newChallenge}
-                  onChange={(e) => setNewChallenge(e.target.value)}
-                  placeholder="Add a challenge..."
-                  className={inputClass}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const val = newChallenge.trim();
-                      if (val) { set("challenges", [...form.challenges, val]); setNewChallenge(""); }
-                    }
-                  }}
-                />
-                <button
-                  type="button"
-                  onClick={() => { const val = newChallenge.trim(); if (val) { set("challenges", [...form.challenges, val]); setNewChallenge(""); } }}
-                  className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex-shrink-0"
-                >
-                  Add
-                </button>
-              </div>
+              <PillSelect
+                options={COMMON_CHALLENGES}
+                value={form.challenges}
+                onChange={(v) => set("challenges", v)}
+                multi
+              />
             </Field>
           </div>
         </div>
@@ -282,6 +255,7 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onUpdateG
         {(showAddGoal || editingGoal) && (
           <GoalEditModal
             goal={editingGoal?.id ? editingGoal : null}
+            existingGoals={form.goals.map((g) => g.title)}
             onSave={async (data) => {
               if (editingGoal?.id) {
                 if (onUpdateGoal) {

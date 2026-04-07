@@ -1,15 +1,34 @@
 import { useState } from "react";
 
-export default function GoalEditModal({ goal, onSave, onClose }) {
+const PREDEFINED_GOALS = [
+  "Get more clients",
+  "Grow revenue",
+  "Make smarter decisions",
+  "Launch my product",
+  "Build an online presence",
+  "Automate repetitive tasks",
+  "Find product-market fit",
+  "Create a content strategy",
+  "Improve pricing",
+  "Hire my first employee",
+];
+
+export default function GoalEditModal({ goal, onSave, onClose, existingGoals = [] }) {
   const [title, setTitle] = useState(goal?.title || "");
-  const [description, setDescription] = useState(goal?.description || "");
   const [status, setStatus] = useState(goal?.status || "not_started");
   const [targetDate, setTargetDate] = useState(goal?.targetDate || "");
 
+  const isEditing = !!goal;
+
+  // Filter out goals already added
+  const availableGoals = PREDEFINED_GOALS.filter(
+    (g) => !existingGoals.includes(g) || g === goal?.title
+  );
+
   function handleSubmit(e) {
     e.preventDefault();
-    if (!title.trim()) return;
-    onSave({ title: title.trim(), description: description.trim(), status, targetDate: targetDate || null });
+    if (!title) return;
+    onSave({ title, description: "", status, targetDate: targetDate || null });
   }
 
   const statuses = [
@@ -22,24 +41,34 @@ export default function GoalEditModal({ goal, onSave, onClose }) {
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/30" onClick={onClose} />
       <form onSubmit={handleSubmit} className="relative bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md">
-        <h3 className="font-semibold text-lg mb-4">{goal ? "Edit Goal" : "Add Goal"}</h3>
+        <h3 className="font-semibold text-lg mb-4">{isEditing ? "Edit Goal" : "Add Goal"}</h3>
 
-        <label className="block text-sm font-medium mb-1">Title *</label>
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm mb-3"
-          autoFocus
-        />
-
-        <label className="block text-sm font-medium mb-1">Description</label>
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          rows={2}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm mb-3"
-        />
+        {isEditing ? (
+          <>
+            <label className="block text-sm font-medium mb-1">Goal</label>
+            <p className="text-sm mb-3 px-3 py-2 bg-gray-50 dark:bg-gray-700 rounded-lg">{title}</p>
+          </>
+        ) : (
+          <>
+            <label className="block text-sm font-medium mb-2">Select a goal</label>
+            <div className="flex flex-wrap gap-2 mb-4">
+              {availableGoals.map((g) => (
+                <button
+                  key={g}
+                  type="button"
+                  onClick={() => setTitle(g)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                    title === g
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  }`}
+                >
+                  {g}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
 
         <label className="block text-sm font-medium mb-1">Status</label>
         <div className="flex gap-2 mb-3">
@@ -71,8 +100,8 @@ export default function GoalEditModal({ goal, onSave, onClose }) {
           <button type="button" onClick={onClose} className="px-3 py-1.5 text-sm rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700">
             Cancel
           </button>
-          <button type="submit" disabled={!title.trim()} className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400">
-            {goal ? "Save" : "Add"}
+          <button type="submit" disabled={!title} className="px-3 py-1.5 text-sm rounded bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-400">
+            {isEditing ? "Save" : "Add"}
           </button>
         </div>
       </form>

@@ -100,6 +100,7 @@ export default function GoalsSection({ goals = [], onAdd, onUpdate, onDelete }) 
       {(showAdd || editingGoal) && (
         <GoalEditModal
           goal={editingGoal?.id ? editingGoal : null}
+          existingGoals={goals.map((g) => g.title)}
           onSave={handleSave}
           onClose={() => { setEditingGoal(null); setShowAdd(false); }}
         />

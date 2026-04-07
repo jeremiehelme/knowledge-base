@@ -280,109 +280,21 @@ export default function OnboardingWizard({ onComplete, onSkip, saveProfile }) {
 
             {step === 2 && (
               <>
-                <Field label="Current goals">
+                <Field label="Select your goals">
                   <PillSelect
                     options={COMMON_GOALS}
                     value={form.goals}
                     onChange={(v) => set("goals", v)}
                     multi
                   />
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      type="text"
-                      id="custom-goal-input"
-                      placeholder="Add a custom goal..."
-                      className={inputClass}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          const val = e.target.value.trim();
-                          if (val && !form.goals.includes(val)) {
-                            set("goals", [...form.goals, val]);
-                            e.target.value = "";
-                          }
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const input = document.getElementById("custom-goal-input");
-                        const val = input.value.trim();
-                        if (val && !form.goals.includes(val)) {
-                          set("goals", [...form.goals, val]);
-                          input.value = "";
-                        }
-                      }}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex-shrink-0"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  {form.goals.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {form.goals.map((g) => (
-                        <span key={g} className="inline-flex items-center gap-1 px-2.5 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full text-sm">
-                          {g}
-                          <button type="button" onClick={() => set("goals", form.goals.filter((x) => x !== g))} className="hover:text-blue-900 dark:hover:text-blue-100">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </Field>
-                <Field label="Challenges">
+                <Field label="Select your challenges">
                   <PillSelect
                     options={COMMON_CHALLENGES}
                     value={form.challenges}
                     onChange={(v) => set("challenges", v)}
                     multi
                   />
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      type="text"
-                      id="custom-challenge-input"
-                      placeholder="Add a custom challenge..."
-                      className={inputClass}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          const val = e.target.value.trim();
-                          if (val && !form.challenges.includes(val)) {
-                            set("challenges", [...form.challenges, val]);
-                            e.target.value = "";
-                          }
-                        }
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const input = document.getElementById("custom-challenge-input");
-                        const val = input.value.trim();
-                        if (val && !form.challenges.includes(val)) {
-                          set("challenges", [...form.challenges, val]);
-                          input.value = "";
-                        }
-                      }}
-                      className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors flex-shrink-0"
-                    >
-                      Add
-                    </button>
-                  </div>
-                  {form.challenges.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {form.challenges.map((c) => (
-                        <span key={c} className="inline-flex items-center gap-1 px-2.5 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300 rounded-full text-sm">
-                          {c}
-                          <button type="button" onClick={() => set("challenges", form.challenges.filter((x) => x !== c))} className="hover:text-orange-900 dark:hover:text-orange-100">
-                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                          </button>
-                        </span>
-                      ))}
-                    </div>
-                  )}
                 </Field>
               </>
             )}
