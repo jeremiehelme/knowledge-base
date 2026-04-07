@@ -1,6 +1,18 @@
 import { useState } from "react";
 import CompanySummaryCard from "./CompanySummaryCard.jsx";
-import GoalsSection from "./GoalsSection.jsx";
+
+const PREDEFINED_GOALS = [
+  "Get more clients",
+  "Grow revenue",
+  "Make smarter decisions",
+  "Launch my product",
+  "Build an online presence",
+  "Automate repetitive tasks",
+  "Find product-market fit",
+  "Create a content strategy",
+  "Improve pricing",
+  "Hire my first employee",
+];
 
 export default function DashboardView({
   profile,
@@ -11,19 +23,28 @@ export default function DashboardView({
   onNavigate,
   onSendMessage,
   onAddGoal,
-  onUpdateGoal,
   onDeleteGoal,
 }) {
   const [promptText, setPromptText] = useState("");
 
   const recentSessions = (sessions || []).slice(0, 5);
   const goals = Array.isArray(profile?.goals) ? profile.goals : [];
+  const activeGoalTitles = goals.map((g) => g.title);
 
   function handlePromptSubmit(e) {
     e.preventDefault();
     if (!promptText.trim()) return;
     onSendMessage(promptText.trim(), selectedAgent);
     setPromptText("");
+  }
+
+  async function toggleGoal(title) {
+    const existing = goals.find((g) => g.title === title);
+    if (existing) {
+      await onDeleteGoal(existing.id);
+    } else {
+      await onAddGoal({ title, description: "", status: "in_progress", targetDate: null });
+    }
   }
 
   return (
@@ -41,12 +62,25 @@ export default function DashboardView({
 
       <CompanySummaryCard profile={profile} />
 
-      <GoalsSection
-        goals={goals}
-        onAdd={onAddGoal}
-        onUpdate={onUpdateGoal}
-        onDelete={onDeleteGoal}
-      />
+      {/* Goals */}
+      <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+        <h2 className="font-medium text-sm text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">Your Goals</h2>
+        <div className="flex flex-wrap gap-2">
+          {PREDEFINED_GOALS.map((title) => (
+            <button
+              key={title}
+              onClick={() => toggleGoal(title)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium border transition-colors ${
+                activeGoalTitles.includes(title)
+                  ? "bg-blue-600 border-blue-600 text-white"
+                  : "bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-400 dark:hover:border-blue-500"
+              }`}
+            >
+              {title}
+            </button>
+          ))}
+        </div>
+      </div>
 
       {/* Ask your Advisor */}
       <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">

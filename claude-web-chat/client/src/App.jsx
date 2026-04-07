@@ -97,8 +97,6 @@ export default function App() {
           <ProfileView
             profile={profileApi.profile}
             saveProfile={profileApi.saveProfile}
-            onAddGoal={profileApi.addGoal}
-            onDeleteGoal={profileApi.deleteGoal}
           />
         );
       case "files":
@@ -139,7 +137,6 @@ export default function App() {
             onNavigate={handleNavigate}
             onSendMessage={handleDashboardSend}
             onAddGoal={profileApi.addGoal}
-            onUpdateGoal={profileApi.updateGoal}
             onDeleteGoal={profileApi.deleteGoal}
           />
         );

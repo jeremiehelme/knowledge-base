@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import GoalEditModal from "./GoalEditModal.jsx";
 
+const PREDEFINED_GOALS = ["Get more clients", "Grow revenue", "Make smarter decisions", "Launch my product", "Build an online presence", "Automate repetitive tasks", "Find product-market fit", "Create a content strategy", "Improve pricing", "Hire my first employee"];
 const COMPANY_STAGES = ["Idea", "Pre-revenue", "Early traction", "Growth", "Established"];
 const TEAM_SIZES = ["Solo", "2-5", "6-20", "21-50", "50+"];
 const REVENUE_MODELS = ["Subscription", "One-time", "Marketplace", "Services", "Ads", "Not yet"];
@@ -68,7 +68,7 @@ function SectionHeading({ children }) {
   );
 }
 
-export default function ProfileView({ profile, saveProfile, onAddGoal, onDeleteGoal }) {
+export default function ProfileView({ profile, saveProfile }) {
   const [form, setForm] = useState({
     companyName: "",
     industry: "",
@@ -86,7 +86,6 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onDeleteG
   });
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [showAddGoal, setShowAddGoal] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -210,28 +209,18 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onDeleteG
           <SectionHeading>Goals & Challenges</SectionHeading>
           <div className="space-y-4">
             <Field label="Goals">
-              <div className="space-y-1">
-                {form.goals.length === 0 ? (
-                  <p className="text-sm text-gray-400">No goals yet.</p>
-                ) : (
-                  form.goals.map((goal) => (
-                    <div key={goal.id} className="flex items-center gap-2 py-1.5 px-2 rounded hover:bg-gray-50 dark:hover:bg-gray-800 group">
-                      <div className="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0" />
-                      <p className="text-sm font-medium flex-1">{goal.title}</p>
-                      <button type="button" onClick={() => { if (onDeleteGoal) onDeleteGoal(goal.id); else set("goals", form.goals.filter((g) => g.id !== goal.id)); }} className="opacity-0 group-hover:opacity-100 text-gray-400 hover:text-red-500">
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-                      </button>
-                    </div>
-                  ))
-                )}
-                <button
-                  type="button"
-                  onClick={() => setShowAddGoal(true)}
-                  className="text-xs font-medium text-blue-500 hover:text-blue-600"
-                >
-                  + Add goal
-                </button>
-              </div>
+              <PillSelect
+                options={PREDEFINED_GOALS}
+                value={form.goals.map((g) => g.title)}
+                onChange={(titles) => {
+                  const newGoals = titles.map((title) => {
+                    const existing = form.goals.find((g) => g.title === title);
+                    return existing || { id: "g_" + Date.now() + "_" + Math.random().toString(36).slice(2, 6), title, description: "", status: "in_progress", targetDate: null };
+                  });
+                  set("goals", newGoals);
+                }}
+                multi
+              />
             </Field>
             <Field label="Challenges">
               <PillSelect
@@ -243,22 +232,6 @@ export default function ProfileView({ profile, saveProfile, onAddGoal, onDeleteG
             </Field>
           </div>
         </div>
-
-        {showAddGoal && (
-          <GoalEditModal
-            existingGoals={form.goals.map((g) => g.title)}
-            onSave={async (data) => {
-              if (onAddGoal) {
-                await onAddGoal(data);
-              } else {
-                const newGoal = { id: "g_" + Date.now(), ...data };
-                set("goals", [...form.goals, newGoal]);
-              }
-              setShowAddGoal(false);
-            }}
-            onClose={() => setShowAddGoal(false)}
-          />
-        )}
 
         {/* Section 4 */}
         <div>
