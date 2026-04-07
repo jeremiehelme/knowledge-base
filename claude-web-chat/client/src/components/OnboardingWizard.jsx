@@ -22,8 +22,8 @@ const STEPS = [
 const COMPANY_STAGES = ["Idea", "Pre-revenue", "Early traction", "Growth", "Established"];
 const TEAM_SIZES = ["Solo", "2-5", "6-20", "21-50", "50+"];
 const REVENUE_MODELS = ["Subscription", "One-time", "Marketplace", "Services", "Ads", "Not yet"];
-const COMMON_GOALS = ["Reach profitability", "Launch MVP", "Hire first employee", "Raise funding", "Reach 100 customers", "Enter new market", "Increase revenue 2x", "Reduce churn"];
-const COMMON_CHALLENGES = ["Finding product-market fit", "Limited budget", "Hiring talent", "Competition", "Customer acquisition", "Time management", "Scaling operations"];
+const COMMON_GOALS = ["Get more clients", "Grow revenue", "Make smarter decisions", "Launch my product", "Build an online presence", "Automate repetitive tasks", "Find product-market fit", "Create a content strategy", "Improve pricing", "Hire my first employee"];
+const COMMON_CHALLENGES = ["Not enough clients", "Limited budget", "Wearing too many hats", "Time management", "Standing out from competition", "Pricing my services right", "Staying consistent with marketing", "Managing cash flow"];
 const ASSISTANT_FOCUS = ["Strategy", "Marketing", "Sales", "Product", "Fundraising", "Operations", "Hiring", "Finance"];
 
 function PillSelect({ options, value, onChange, multi = false }) {
